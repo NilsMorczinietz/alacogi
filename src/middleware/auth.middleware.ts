@@ -10,8 +10,6 @@ export const authenticateStaticToken = (
   res: Response,
   next: NextFunction
 ) => {
-    console.log("TOKENS:", VALID_TOKENS);
-
   const authHeader = req.headers["authorization"];
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
