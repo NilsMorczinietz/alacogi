@@ -4,7 +4,7 @@
     {
       "label": "Docker deploy (clean build)",
       "type": "shell",
-      "command": "docker-compose up --build; docker image prune -f",
+      "command": "docker-compose up --build",
       "group": "build",
       "problemMatcher": []
     },
