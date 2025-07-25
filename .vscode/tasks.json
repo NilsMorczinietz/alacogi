@@ -7,6 +7,13 @@
       "command": "docker-compose up --build; docker image prune -f",
       "group": "build",
       "problemMatcher": []
+    },
+    {
+      "label": "Format code",
+      "type": "shell",
+      "command": "npm run format",
+      "group": "none",
+      "problemMatcher": []
     }
   ]
 }
