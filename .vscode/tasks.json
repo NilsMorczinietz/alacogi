@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Docker deploy",
+      "label": "Docker deploy (clean build)",
       "type": "shell",
-      "command": "docker-compose up --build",
+      "command": "docker-compose up --build; docker image prune -f",
       "group": "build",
       "problemMatcher": []
     }
