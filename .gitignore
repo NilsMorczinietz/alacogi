@@ -1,0 +1,43 @@
+# === Node.js ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# === TypeScript ===
+dist/
+build/
+*.tsbuildinfo
+
+# === Environment ===
+.env
+.env.local
+.env.*.local
+
+# === Logs ===
+logs/
+*.log
+
+# === VSCode ===
+# .vscode/
+.history/
+
+# === Docker ===
+*.local
+docker-compose.override.yml
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Coverage / Testing ===
+coverage/
+.nyc_output/
+jest-cache/
+jest-test-results.json
+
+# === Misc ===
+.idea/
+*.swp
+*.swo
