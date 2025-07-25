@@ -10,7 +10,25 @@ export const handleAlarmEcho = (
   res.json({ received: data });
 };
 
-export const receiveAlarm = (
+export const createAlarm = (
+  req: Request<{}, {}, AlarmPayload>,
+  res: Response
+) => {
+  const alarm = req.body;
+  console.log("Alarm empfangen:", alarm);
+  res.status(201).json({ message: "Alarm erfolgreich empfangen", alarm });
+};
+
+export const incomingAlarm = (
+  req: Request<{}, {}, AlarmPayload>,
+  res: Response
+) => {
+  const alarm = req.body;
+  console.log("Alarm empfangen:", alarm);
+  res.status(201).json({ message: "Alarm erfolgreich empfangen", alarm });
+};
+
+export const announceAlarm = (
   req: Request<{}, {}, AlarmPayload>,
   res: Response
 ) => {
