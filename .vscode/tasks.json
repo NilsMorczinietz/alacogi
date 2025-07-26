@@ -15,33 +15,5 @@
       "group": "none",
       "problemMatcher": []
     },
-    {
-      "label": "Prisma: Dev Migration (local)",
-      "type": "shell",
-      "command": "npx dotenv -e .env.local -- npx prisma migrate dev",
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "Prisma: Deploy Migration (production)",
-      "type": "shell",
-      "command": "npx dotenv -e .env.production -- npx prisma migrate deploy",
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "Prisma: Reset (local)",
-      "type": "shell",
-      "command": "npx dotenv -e .env.local -- npx prisma migrate reset --force",
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "Prisma: Reset (production)",
-      "type": "shell",
-      "command": "npx dotenv -e .env.production -- npx prisma migrate reset --force",
-      "group": "build",
-      "problemMatcher": []
-    }
   ]
 }

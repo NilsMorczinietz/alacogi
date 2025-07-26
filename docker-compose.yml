@@ -21,7 +21,7 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - alacogi-db-data:/var/lib/postgresql/data
-      - ./db:/docker-entrypoint-initdb.d 
+      - ./db/init:/docker-entrypoint-initdb.d 
 
 volumes:
   alacogi-db-data:
