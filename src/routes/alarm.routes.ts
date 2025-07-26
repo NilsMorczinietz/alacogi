@@ -3,7 +3,7 @@ import {
   handleAlarmEcho,
   createAlarm,
   incomingAlarm,
-  announceAlarm,
+  announceAlarm
 } from '../controllers/alarm.controller';
 import { authenticateStaticToken, combineAuth } from '../middleware/auth.middleware';
 

@@ -7,6 +7,5 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "always",
     "source.fixAll.eslint": "always"
-  },
-  "prettier.configPath": "./.prettierrc"
+  }
 }
