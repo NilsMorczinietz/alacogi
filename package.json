@@ -8,7 +8,7 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "dev": "nodemon --watch src/**/*.ts --exec \"npx ts-node\" src/index.ts",
-    "format": "prettier --write \"src/**/*.{ts,js,json,md}\" \"db/**/*.{ts,js,json,md,sql}\" \"docs/**/*.{md,json}\" \".vscode/**/*.{json,md}\""
+    "format": "prettier --write \"src/**/*.{ts,js,json,md}\" \"docs/**/*.{md,json}\" \".vscode/**/*.{json,md}\" \"prisma/**/*.{prisma,sql}\""
   },
   "keywords": [],
   "author": "",
@@ -36,6 +36,7 @@
     "eslint-plugin-prettier": "^5.5.3",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
+    "prettier-plugin-prisma": "^5.0.0",
     "prettier-plugin-sql": "^0.19.2",
     "prisma": "^6.12.0",
     "ts-node": "^10.9.2",

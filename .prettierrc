@@ -8,5 +8,5 @@
   "arrowParens": "always",
   "bracketSpacing": true,
   "endOfLine": "lf",
-  "plugins": ["prettier-plugin-sql"]
+  "plugins": ["prettier-plugin-sql", "prettier-plugin-prisma"]
 }

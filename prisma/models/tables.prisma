@@ -1,0 +1,28 @@
+model alarms {
+  id                Int       @id @default(autoincrement())
+  foreign_id        String?   @unique
+  title             String
+  TEXT              String?
+  address           String?
+  lat               Float?
+  lng               Float?
+  priority          Boolean   @default(false)
+  notification_type Int?
+  ts_create         DateTime?
+  ts_update         DateTime?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @default(now())
+
+  alarm_returns alarm_returns[]
+}
+
+model alarm_returns {
+  id          Int      @id @default(autoincrement())
+  alarm_id    Int
+  returned_at DateTime
+  notes       String?
+
+  alarms alarms @relation(fields: [alarm_id], references: [id], onDelete: Cascade)
+
+  @@index([alarm_id])
+}
