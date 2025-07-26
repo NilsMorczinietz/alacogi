@@ -4,10 +4,10 @@ import { Request, Response } from 'express';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const BACKEND_PORT = process.env.BACKEND_PORT || 8080;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
+app.listen(BACKEND_PORT, () => {
+  console.log(`🚀 Server läuft auf http://localhost:${BACKEND_PORT}`);
 });
 
 app.get('/', (req: Request, res: Response) => {

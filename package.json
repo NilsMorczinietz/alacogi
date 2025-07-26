@@ -8,16 +8,18 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "dev": "nodemon --watch src/**/*.ts --exec \"npx ts-node\" src/index.ts",
-    "format": "prettier --write \"src/**/*.{ts,js,json,md}\""
+    "format": "prettier --write \"src/**/*.{ts,js,json,md}\" \"db/**/*.{ts,js,json,md,sql}\" \"docs/**/*.{md,json}\" \".vscode/**/*.{json,md}\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@types/pg": "^8.15.4",
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -32,6 +34,7 @@
     "eslint-plugin-prettier": "^5.5.3",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
+    "prettier-plugin-sql": "^0.19.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
