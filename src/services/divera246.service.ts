@@ -8,7 +8,7 @@ const DIVERA_API_URL = 'https://divera247.com/api/v2/alarms';
  * @returns {Promise<any>} The response data from the API.
  * @throws {Error} If the access key is not set or the request fails.
  */
-export async function fetchAllAlarms(): Promise<any> {
+export async function fetchAllAlarms(): Promise<unknown> {
   const accessKey = process.env.DIVERA_API_KEY;
   if (!accessKey) {
     throw new Error('Environment variable DIVERA_API_KEY is not set.');
