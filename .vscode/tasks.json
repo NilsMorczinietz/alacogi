@@ -2,23 +2,46 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Docker: Deploy",
+      "label": "Docker: Start (Build)",
       "type": "shell",
       "command": "docker-compose up --build",
       "group": "build",
       "problemMatcher": []
     },
     {
-      "label": "Code: Format",
+      "label": "Format Code",
       "type": "shell",
       "command": "npm run format",
       "group": "none",
       "problemMatcher": []
     },
     {
-      "label": "Create Prisma: Migrate",
+      "label": "Prisma: Dev Migration (local)",
       "type": "shell",
       "command": "npx dotenv -e .env.local -- npx prisma migrate dev",
+      "group": "build",
+      "problemMatcher": []
+    }
+    ,
+    {
+      "label": "Prisma: Deploy Migration (production)",
+      "type": "shell",
+      "command": "npx dotenv -e .env.production -- npx prisma migrate deploy",
+      "group": "build",
+      "problemMatcher": []
+    }
+    ,
+    {
+      "label": "Prisma: Reset (local)",
+      "type": "shell",
+      "command": "npx dotenv -e .env.local -- npx prisma migrate reset --force",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Prisma: Reset (production)",
+      "type": "shell",
+      "command": "npx dotenv -e .env.production -- npx prisma migrate reset --force",
       "group": "build",
       "problemMatcher": []
     }
