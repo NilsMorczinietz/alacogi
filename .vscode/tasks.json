@@ -2,17 +2,24 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Docker deploy",
+      "label": "Docker: Deploy",
       "type": "shell",
       "command": "docker-compose up --build",
       "group": "build",
       "problemMatcher": []
     },
     {
-      "label": "Format code",
+      "label": "Code: Format",
       "type": "shell",
       "command": "npm run format",
       "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "Create Prisma: Migrate",
+      "type": "shell",
+      "command": "npx dotenv -e .env.local -- npx prisma migrate dev",
+      "group": "build",
       "problemMatcher": []
     }
   ]

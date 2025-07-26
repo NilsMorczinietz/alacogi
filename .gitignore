@@ -41,3 +41,6 @@ jest-test-results.json
 .idea/
 *.swp
 *.swo
+
+# === Prisma ===
+/src/generated/prisma
