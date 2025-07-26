@@ -1,6 +1,6 @@
 import express from 'express';
-import echoRoutes from './routes/echo.routes';
-import alarmRoutes from './routes/alarm.routes';
+import echoRoutes from './routes/echo.routes.js';
+import alarmRoutes from './routes/alarm.routes.js';
 
 const app = express();
 app.use(express.json());

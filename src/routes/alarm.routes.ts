@@ -4,8 +4,8 @@ import {
   createAlarm,
   incomingAlarm,
   announceAlarm
-} from '../controllers/alarm.controller';
-import { authenticateStaticToken, combineAuth } from '../middleware/auth.middleware';
+} from '../controllers/alarm.controller.js';
+import { authenticateStaticToken, combineAuth } from '../middleware/auth.middleware.js';
 
 const router = Router();
 

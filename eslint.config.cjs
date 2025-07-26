@@ -22,6 +22,12 @@ module.exports = [
         },
         rules: {
             ...require('eslint-plugin-prettier').configs.recommended.rules,
+            'prettier/prettier': [
+                'error',
+                {
+                    trailingComma: 'none'
+                }
+            ],
             ...require('@typescript-eslint/eslint-plugin').configs.recommended.rules,
             ...require('@typescript-eslint/eslint-plugin').configs['recommended-requiring-type-checking'].rules,
             '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],

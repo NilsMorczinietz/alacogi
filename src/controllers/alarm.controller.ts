@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { AlarmPayload } from '../types/alarm.type';
-import { fetchAllAlarms } from '../services/divera246.service';
+import { AlarmPayload } from '../types/alarm.type.js';
+import { fetchAllAlarms } from '../services/divera.service.js';
 
 export const handleAlarmEcho = (req: Request<unknown, unknown, AlarmPayload>, res: Response) => {
   const data = req.body;

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { handleEcho } from '../controllers/echo.controller';
+import { handleEcho } from '../controllers/echo.controller.js';
 
 const router = Router();
 
