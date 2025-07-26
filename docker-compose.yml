@@ -4,7 +4,7 @@ services:
     build: .
     ports:
       - "${BACKEND_PORT:-8080}:8080"
-    command: sh -c "npx prisma migrate deploy && npm start"
+    command: npm start
     env_file:
       - .env
     depends_on:
@@ -21,6 +21,7 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - alacogi-db-data:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d 
 
 volumes:
   alacogi-db-data:

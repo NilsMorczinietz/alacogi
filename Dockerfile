@@ -1,5 +1,8 @@
 # 1. Basis-Image mit Node.js
-FROM node:18-alpine
+FROM node:20
+
+# 2. psql installieren für SQL-Migrationen
+RUN apt-get update && apt-get install -y postgresql-client
 
 # 2. Arbeitsverzeichnis im Container
 WORKDIR /app
