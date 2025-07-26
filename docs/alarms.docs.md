@@ -91,7 +91,7 @@ Authorization: Bearer <your-token>
 
 ---
 
-## 🔐 Authentifizierung
+## Authentifizierung
 
 Alle Endpunkte erfordern einen gültigen statischen Token zur Authentifizierung.
 
