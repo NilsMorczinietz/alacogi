@@ -37,6 +37,14 @@ export async function saveAlarm(alarm: AlarmPayload): Promise<AlarmRow> {
     RETURNING *;
   `;
 
+  // Convert Unix timestamps (seconds) to JS Date objects if needed
+
+  const tsCreate =
+    typeof alarm.ts_create === 'number' ? new Date(alarm.ts_create * 1000) : alarm.ts_create;
+
+  const tsUpdate =
+    typeof alarm.ts_update === 'number' ? new Date(alarm.ts_update * 1000) : alarm.ts_update;
+
   const values = [
     alarm.foreign_id,
     alarm.title,
@@ -46,8 +54,8 @@ export async function saveAlarm(alarm: AlarmPayload): Promise<AlarmRow> {
     alarm.lng,
     alarm.priority,
     alarm.notification_type,
-    alarm.ts_create,
-    alarm.ts_update
+    tsCreate,
+    tsUpdate
   ];
 
   try {

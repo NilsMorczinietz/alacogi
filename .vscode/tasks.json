@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Docker deploy (clean build)",
+      "label": "Docker deploy",
       "type": "shell",
       "command": "docker-compose up --build",
       "group": "build",

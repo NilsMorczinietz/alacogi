@@ -1,15 +1,17 @@
 import { Request, Response } from 'express';
 import { AlarmPayload } from '../types/alarm.type.js';
 import { fetchAllAlarms } from '../services/divera.service.js';
+import { saveAlarm } from '../services/alarm.service.js';
 
 export const handleAlarmEcho = (req: Request<unknown, unknown, AlarmPayload>, res: Response) => {
   const data = req.body;
   res.json({ received: data });
 };
 
-export const createAlarm = (req: Request<unknown, unknown, AlarmPayload>, res: Response) => {
+export const createAlarm = async (req: Request<unknown, unknown, AlarmPayload>, res: Response) => {
   const alarm = req.body;
   res.status(201).json({ message: 'Alarm erfolgreich empfangen', alarm });
+  await saveAlarm(alarm);
 };
 
 export const incomingAlarm = (req: Request<unknown, unknown, AlarmPayload>, res: Response) => {
