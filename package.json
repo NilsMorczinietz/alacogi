@@ -10,6 +10,9 @@
     "dev": "nodemon --watch src/**/*.ts --exec \"npx ts-node\" src/index.ts",
     "format": "prettier --write \"src/**/*.{ts,js,json,md}\" \"docs/**/*.{md,json}\" \".vscode/**/*.{json,md}\" \"prisma/**/*.{prisma,sql}\""
   },
+  "prisma": {
+    "schema": "prisma/schema"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
