@@ -46,3 +46,7 @@ jest-test-results.json
 # === Prisma ===
 /src/generated/
 prisma/migrations/
+
+# === Temporary Files ===
+temp/
+tmp/

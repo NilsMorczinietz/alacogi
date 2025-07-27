@@ -22,6 +22,7 @@ module.exports = [
         },
         rules: {
             ...require('eslint-plugin-prettier').configs.recommended.rules,
+            "comma-dangle": ["error", "never"],
             'prettier/prettier': [
                 'error',
                 {

@@ -1,8 +1,3 @@
 {
-  "recommendations": [
-    "actboy168.tasks",
-    "esbenp.prettier-vscode",
-    "rvest.vs-code-prettier-eslint",
-    "prisma.prisma"
-  ]
+  "recommendations": ["actboy168.tasks", "esbenp.prettier-vscode", "rvest.vs-code-prettier-eslint"]
 }

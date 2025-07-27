@@ -1,25 +1,37 @@
 CREATE TABLE alarms (
-  id SERIAL PRIMARY KEY,
+  id INTEGER PRIMARY KEY,
   foreign_id VARCHAR UNIQUE,
   title VARCHAR NOT NULL,
-  TEXT VARCHAR,
-  address VARCHAR,
+  "text" VARCHAR,
+  "address" VARCHAR,
   lat DOUBLE PRECISION,
   lng DOUBLE PRECISION,
-  priority BOOLEAN DEFAULT FALSE,
+  "priority" BOOLEAN DEFAULT FALSE,
   notification_type INTEGER,
-  ts_create TIMESTAMP,
-  ts_update TIMESTAMP,
-  created_at TIMESTAMP DEFAULT NOW (),
-  updated_at TIMESTAMP DEFAULT NOW ()
+  ts_create TIMESTAMP
 );
 
 CREATE TABLE alarm_returns (
-  id SERIAL PRIMARY KEY,
+  id INTEGER PRIMARY KEY,
   alarm_id INTEGER NOT NULL,
   returned_at TIMESTAMP NOT NULL,
   notes VARCHAR,
   CONSTRAINT fk_alarm FOREIGN KEY (alarm_id) REFERENCES alarms (id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_alarm_returns_alarm_id ON alarm_returns (alarm_id);
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  "name" VARCHAR NOT NULL
+);
+
+CREATE TABLE "groups" (id INTEGER PRIMARY KEY, "name" VARCHAR NOT NULL);
+
+CREATE TABLE vehicles (
+  id INTEGER PRIMARY KEY,
+  "name" VARCHAR NOT NULL,
+  fullname VARCHAR NOT NULL,
+  shortname VARCHAR NOT NULL,
+  issi CHAR(7) NOT NULL
+);
+
+CREATE TABLE answere_codes (id INTEGER PRIMARY KEY, lable VARCHAR NOT NULL);
