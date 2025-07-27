@@ -13,6 +13,6 @@ export function mapDiveraAlarmToAlarm(raw: DiveraAlarm): Alarm {
     lng: raw.lng,
     priority: raw.priority,
     notification_type: raw.notification_type,
-    ts_create: convertUnixToDate(raw.ts_create)
+    created: convertUnixToDate(raw.ts_create)
   };
 }

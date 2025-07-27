@@ -8,7 +8,7 @@ export interface Alarm {
   lng: number;
   priority: boolean;
   notification_type: number;
-  ts_create: Date;
+  created: Date;
 }
 
 export interface AlarmList {

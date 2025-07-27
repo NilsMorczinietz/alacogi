@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS alarms (
   lng DOUBLE PRECISION,
   "priority" BOOLEAN DEFAULT FALSE,
   notification_type INTEGER,
-  ts_create TIMESTAMP
+  created TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS alarm_returns (

@@ -18,7 +18,7 @@ const pool = new Pool(config);
 export async function saveAlarm(alarm: Alarm): Promise<Alarm> {
   const query = `
     INSERT INTO alarms (
-      id, foreign_id, title, text, address, lat, lng, priority, notification_type, ts_create
+      id, foreign_id, title, text, address, lat, lng, priority, notification_type, created
     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
     RETURNING *;
   `;
@@ -33,7 +33,7 @@ export async function saveAlarm(alarm: Alarm): Promise<Alarm> {
     alarm.lng,
     alarm.priority,
     alarm.notification_type,
-    alarm.ts_create
+    alarm.created
   ];
 
   try {
