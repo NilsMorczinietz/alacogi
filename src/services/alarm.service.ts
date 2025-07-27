@@ -1,5 +1,6 @@
 import { Pool, PoolConfig, QueryResult } from 'pg';
 import { AlarmPayload } from '../types/alarm.type.js';
+import { convertUnixToDate } from '../utils/time.utils.js';
 
 const dbUser = process.env.POSTGRES_USER || 'alacogi';
 const dbPassword = process.env.POSTGRES_PASSWORD || 'alacogi';
@@ -16,36 +17,31 @@ const config: PoolConfig = {
 const pool = new Pool(config);
 
 interface AlarmRow {
-  id?: number;
+  id: number;
   foreign_id: string;
   title: string;
   text: string;
   address: string;
   lat: number;
   lng: number;
-  priority: number;
-  notification_type: string;
+  priority: boolean;
+  notification_type: number;
   ts_create: Date;
-  ts_update: Date;
 }
 
 export async function saveAlarm(alarm: AlarmPayload): Promise<AlarmRow> {
   const query = `
     INSERT INTO alarms (
-      foreign_id, title, text, address, lat, lng, priority, notification_type, ts_create, ts_update
+      id, foreign_id, title, text, address, lat, lng, priority, notification_type, ts_create
     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
     RETURNING *;
   `;
 
-  // Convert Unix timestamps (seconds) to JS Date objects if needed
-
   const tsCreate =
-    typeof alarm.ts_create === 'number' ? new Date(alarm.ts_create * 1000) : alarm.ts_create;
-
-  const tsUpdate =
-    typeof alarm.ts_update === 'number' ? new Date(alarm.ts_update * 1000) : alarm.ts_update;
+    typeof alarm.ts_create === 'number' ? convertUnixToDate(alarm.ts_create) : alarm.ts_create;
 
   const values = [
+    alarm.id,
     alarm.foreign_id,
     alarm.title,
     alarm.text,
@@ -54,8 +50,7 @@ export async function saveAlarm(alarm: AlarmPayload): Promise<AlarmRow> {
     alarm.lng,
     alarm.priority,
     alarm.notification_type,
-    tsCreate,
-    tsUpdate
+    tsCreate
   ];
 
   try {
