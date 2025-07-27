@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AlarmPayload } from '../types/alarm.type.js';
-import { fetchAllAlarms } from '../services/divera.service.js';
+import processAlarmText, { fetchAllAlarms } from '../services/divera.service.js';
 import { saveAlarm } from '../services/alarm.service.js';
 import { DiveraAlarms } from '../types/divera.type.js';
 
@@ -31,8 +31,16 @@ export const announceAlarm = async (req: Request, res: Response) => {
     const alarms: DiveraAlarms = await fetchAllAlarms();
     if (!alarms) return res.status(404).json({ error: 'Keine Alarme gefunden' });
 
+    if (alarms.data.sorting.length === 0)
+      return res.status(404).json({ error: 'Keine neuen Alarme gefunden' });
+
     const latestAlarmId: number = alarms.data.sorting[0];
     const latestAlarm = alarms.data.items[latestAlarmId];
+
+    const processedAlarmText = processAlarmText(latestAlarm.text);
+    if (processedAlarmText.description) {
+      latestAlarm.text = processedAlarmText.description;
+    }
 
     res.status(201).json({ message: 'Announcement empfangen', latestAlarm });
   } catch (error) {

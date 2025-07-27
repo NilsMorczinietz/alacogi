@@ -29,7 +29,7 @@ VALUES
   );
 
 INSERT INTO
-  answere_codes (id, lable)
+  answer_codes (id, label)
 VALUES
   (42470, 'Nicht verfügbar'),
   (48176, '30 Minuten'),
