@@ -1,6 +1,5 @@
 import { Pool, PoolConfig, QueryResult } from 'pg';
-import { AlarmPayload } from '../types/alarm.type.js';
-import { convertUnixToDate } from '../utils/time.utils.js';
+import { Alarm } from '../types/alarm.type.js';
 
 const dbUser = process.env.POSTGRES_USER || 'alacogi';
 const dbPassword = process.env.POSTGRES_PASSWORD || 'alacogi';
@@ -16,29 +15,13 @@ const config: PoolConfig = {
 
 const pool = new Pool(config);
 
-interface AlarmRow {
-  id: number;
-  foreign_id: string;
-  title: string;
-  text: string;
-  address: string;
-  lat: number;
-  lng: number;
-  priority: boolean;
-  notification_type: number;
-  ts_create: Date;
-}
-
-export async function saveAlarm(alarm: AlarmPayload): Promise<AlarmRow> {
+export async function saveAlarm(alarm: Alarm): Promise<Alarm> {
   const query = `
     INSERT INTO alarms (
       id, foreign_id, title, text, address, lat, lng, priority, notification_type, ts_create
     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
     RETURNING *;
   `;
-
-  const tsCreate =
-    typeof alarm.ts_create === 'number' ? convertUnixToDate(alarm.ts_create) : alarm.ts_create;
 
   const values = [
     alarm.id,
@@ -50,11 +33,11 @@ export async function saveAlarm(alarm: AlarmPayload): Promise<AlarmRow> {
     alarm.lng,
     alarm.priority,
     alarm.notification_type,
-    tsCreate
+    alarm.ts_create
   ];
 
   try {
-    const result: QueryResult<AlarmRow> = await pool.query(query, values);
+    const result: QueryResult<Alarm> = await pool.query(query, values);
     return result.rows[0];
   } catch (error) {
     console.error('Error saving alarm:', error);

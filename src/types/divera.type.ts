@@ -1,4 +1,4 @@
-export interface DiveraAlarms {
+export interface DiveraAlarmList {
   data: {
     sorting: number[];
     items: { [key: number]: DiveraAlarm };
