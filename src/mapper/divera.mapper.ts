@@ -1,4 +1,4 @@
-import { processAlarmText } from '../services/divera.service';
+import { processAlarmText } from '../services/divera.service.js';
 import { Alarm } from '../types/alarm.type';
 import { DiveraAlarm } from '../types/divera.type';
 import { convertUnixToDate } from '../utils/time.utils.js';
