@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Alarm } from '../types/alarm.type.js';
-import processAlarmText, { fetchAllAlarms } from '../services/divera.service.js';
+import { fetchAllAlarms } from '../services/divera.service.js';
 import { saveAlarm } from '../services/alarm.service.js';
 import { DiveraAlarmList } from '../types/divera.type.js';
 import { mapDiveraAlarmToAlarm } from '../mapper/divera.mapper.js';
@@ -40,17 +40,9 @@ export const announceAlarm = async (req: Request, res: Response) => {
 
     const alarm: Alarm = mapDiveraAlarmToAlarm(latestDiveraAlarm);
 
-    const processedAlarmText = processAlarmText(alarm.text);
-    if (processedAlarmText.description) {
-      alarm.text = processedAlarmText.description;
-    }
-
     // await saveAlarm(alarm);
 
-    res.status(201).json({
-      message: 'Announcement empfangen',
-      latestAlarm: alarm
-    });
+    res.status(201).json({ message: 'Announcement empfangen', latestAlarm: alarm });
   } catch (error) {
     console.error('Fehler beim Abrufen der divera-Daten:', error);
     res.status(500).json({ error: 'Fehler beim Abrufen der divera-Daten' });

@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS alarms (
   id INTEGER PRIMARY KEY,
   foreign_id VARCHAR UNIQUE,
   title VARCHAR NOT NULL,
-  "text" VARCHAR,
+  description VARCHAR,
   "address" VARCHAR,
   lat DOUBLE PRECISION,
   lng DOUBLE PRECISION,

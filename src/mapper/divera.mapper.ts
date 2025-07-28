@@ -1,13 +1,19 @@
+import { processAlarmText } from '../services/divera.service';
 import { Alarm } from '../types/alarm.type';
 import { DiveraAlarm } from '../types/divera.type';
 import { convertUnixToDate } from '../utils/time.utils.js';
 
 export function mapDiveraAlarmToAlarm(raw: DiveraAlarm): Alarm {
+  if (!raw) throw new Error('Ungültige DiveraAlarm-Daten');
+
+  const processedText = processAlarmText(raw.text);
+  if (processedText.description) raw.text = processedText.description;
+
   return {
     id: raw.id,
     foreign_id: raw.foreign_id,
     title: raw.title,
-    text: raw.text,
+    description: raw.text,
     address: raw.address,
     lat: raw.lat,
     lng: raw.lng,

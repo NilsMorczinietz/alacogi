@@ -40,7 +40,7 @@ export async function fetchAllAlarms(): Promise<DiveraAlarmList> {
  * @returns {Object} An object containing the processed information.
  * @throws {Error} If the text does not contain enough parts to process.
  */
-export default function processAlarmText(text: string): {
+export function processAlarmText(text: string): {
   title: string | undefined;
   streetAndHouseNumber: string | undefined;
   city1: string | undefined;
@@ -70,7 +70,7 @@ export default function processAlarmText(text: string): {
   const melderMatch = parts[6].match(/Melder:\s*(.*)/);
   const melder: string | undefined = melderMatch ? melderMatch[1].trim() : undefined;
 
-  const description: string | undefined = parts[7].trim() || undefined;
+  const description: string | undefined = parts[7]?.trim() || undefined;
 
   return { title, streetAndHouseNumber, city1, city2, city3, enr, melder, description };
 }

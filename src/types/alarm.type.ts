@@ -2,7 +2,7 @@ export interface Alarm {
   id: number;
   foreign_id: string;
   title: string;
-  text: string;
+  description: string;
   address: string;
   lat: number;
   lng: number;
