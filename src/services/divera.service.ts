@@ -70,7 +70,7 @@ export function processAlarmText(text: string): {
   const melderMatch = parts[6].match(/Melder:\s*(.*)/);
   const melder: string | undefined = melderMatch ? melderMatch[1].trim() : undefined;
 
-  const description: string | undefined = parts[7]?.trim() || undefined;
+  const description: string | undefined = parts.slice(7).join(',').trim() || undefined;
 
   return { title, streetAndHouseNumber, city1, city2, city3, enr, melder, description };
 }
