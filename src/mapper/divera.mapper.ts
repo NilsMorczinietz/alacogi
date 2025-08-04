@@ -6,8 +6,12 @@ import { convertUnixToDate } from '../utils/time.utils.js';
 export function mapDiveraAlarmToAlarm(raw: DiveraAlarm): Alarm {
   if (!raw) throw new Error('Ungültige DiveraAlarm-Daten');
 
-  const processedText = processAlarmText(raw.text);
-  if (processedText.description) raw.text = processedText.description;
+  try {
+    const processedText = processAlarmText(raw.text);
+    if (processedText.description) raw.text = processedText.description;
+  } catch (error) {
+    console.error('Fehler bei der Verarbeitung des Alarmtexts:', error);
+  }
 
   return {
     id: raw.id,
