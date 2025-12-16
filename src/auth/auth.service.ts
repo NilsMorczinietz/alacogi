@@ -6,6 +6,7 @@ import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { UserId } from '../user/entity/user-id';
 
 @Injectable()
 export class AuthService {
@@ -68,12 +69,12 @@ export class AuthService {
     };
   }
 
-  async validateUser(userId: string) {
+  async validateUser(userId: UserId) {
     return this.userService.findById(userId);
   }
 
   private generateToken(user: User): string {
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id.getId(), email: user.email };
     return this.jwtService.sign(payload);
   }
 }

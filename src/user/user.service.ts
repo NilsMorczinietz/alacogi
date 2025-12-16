@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
+import { UserId } from './entity/user-id';
 
 @Injectable()
 export class UserService {
@@ -20,8 +21,8 @@ export class UserService {
   /**
    * Find user by ID (without password)
    */
-  findById(id: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { id: id as any } });
+  findById(id: UserId): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id: id.getId()} });
   }
 
   /**
