@@ -5,6 +5,7 @@ import { User } from '../user/entity/user.entity';
 import { UserService } from '../user/user.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { AuthResponseDto } from './dto/auth-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto) {
+  async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
     const { email, password, name } = registerDto;
 
     // Check if user already exists
@@ -34,14 +35,13 @@ export class AuthService {
     return {
       access_token: token,
       user: {
-        id: user.id,
         email: user.email,
         name: user.name,
       },
     };
   }
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto): Promise<AuthResponseDto> {
     const { email, password } = loginDto;
 
     // Load user with password (password is not loaded by default)
@@ -62,9 +62,7 @@ export class AuthService {
 
     return {
       access_token: token,
-      user: {
-        id: user.id,
-        email: user.email,
+      user: {email,
         name: user.name,
       },
     };

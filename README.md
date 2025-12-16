@@ -1,29 +1,28 @@
 # Simple NestJS mit PostgreSQL
 
-## Setup
+## Quick Start
 
-1. Abhängigkeiten installieren:
-```bash
-npm install
-```
+1. **Setup**
+   ```bash
+   npm install
+   cp .env.example .env  # Anpassen falls nötig
+   ```
 
-2. PostgreSQL-Container starten:
-```bash
-docker-compose up -d
-```
+2. **Development** (lokal, nur DB im Container)
+   - VS Code: `Ctrl+Shift+P` → `Tasks: Run Task` → `Dev: Start`
+   - Oder: `npm run start:dev`
 
-3. Anwendung starten:
-```bash
-npm run start:dev
-```
+3. **Production** (alles im Container)
+   - VS Code: `Ctrl+Shift+P` → `Tasks: Run Task` → `Docker: Up (Production)`
+   - Oder: `docker-compose up --build`
 
-## API Endpoints
+## VS Code Tasks
 
-- `GET http://localhost:3000/users` - Alle User abrufen
-- `POST http://localhost:3000/users` - Neuen User erstellen
-  ```json
-  {
-    "name": "Max Mustermann",
-    "email": "max@example.com"
-  }
-  ```
+- **Dev: Start** - Backend lokal starten (Hot-Reload)
+- **Docker: Up (Production)** - Alles als Container
+- **Docker: Down** - Container stoppen
+- **Docker: Logs** - Backend Logs anzeigen
+
+## Doku
+
+API Dokumentation verfügbar unter http://localhost:3000/api/docs
