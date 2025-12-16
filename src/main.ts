@@ -23,6 +23,16 @@ async function bootstrap() {
     .setDescription('API Dokumentation für Alacogi')
     .setVersion('1.0')
     .addTag('users')
+    .addTag('auth')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'JWT Token nach Login eingeben',
+      },
+      'JWT-auth',
+    )
     .build();
   
   const document = SwaggerModule.createDocument(app, config);
