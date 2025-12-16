@@ -22,7 +22,7 @@ export class UserService {
    * Find user by ID (without password)
    */
   findById(id: UserId): Promise<User | null> {
-    return this.userRepository.findOne({ where: { id: id.getId()} });
+    return this.userRepository.findOne({ where: { id } });
   }
 
   /**
