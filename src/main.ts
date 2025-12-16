@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Enable validation globally
   app.useGlobalPipes(
     new ValidationPipe({
@@ -14,9 +14,9 @@ async function bootstrap() {
       transform: true, // Automatically transform payloads to DTO instances
     }),
   );
-  
+
   app.setGlobalPrefix('api/v1');
-  
+
   // Swagger/OpenAPI Configuration
   const config = new DocumentBuilder()
     .setTitle('Alacogi API')
@@ -34,10 +34,10 @@ async function bootstrap() {
       'JWT-auth',
     )
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
-  
+
   await app.listen(3000);
   console.log('Server läuft auf http://localhost:3000/api/v1');
   console.log('API Dokumentation verfügbar unter http://localhost:3000/api/docs');

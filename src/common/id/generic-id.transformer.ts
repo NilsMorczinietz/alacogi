@@ -4,7 +4,7 @@ import { GenericId } from './generic-id';
 /**
  * Abstract base class for TypeORM value transformers for typed IDs.
  * Ensures proper database mapping of typed ID classes.
- * 
+ *
  * NOTE: The transformer is automatically applied and should not be directly used in code!
  */
 export abstract class GenericIdTransformer<T extends GenericId> implements ValueTransformer {
