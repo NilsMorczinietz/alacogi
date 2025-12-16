@@ -1,0 +1,14 @@
+# dependencies
+node_modules/
+dist/
+build/
+
+# misc
+.DS_Store
+*.log
+*.lock
+
+# env files
+.env
+.env.local
+.env.*.local
