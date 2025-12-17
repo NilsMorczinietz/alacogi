@@ -12,7 +12,7 @@ jobs:
         env:
           POSTGRES_USER: testuser
           POSTGRES_PASSWORD: testpass
-          POSTGRES_DB: alacogi_test
+          POSTGRES_DB: alacogi-test-db
         ports:
           - 5433:5432
         options: >-
@@ -49,6 +49,6 @@ jobs:
         DB_PORT: 5433
         DB_USER: testuser
         DB_PASSWORD: testpass
-        DB_NAME: alacogi_test
-        JWT_SECRET: test-secret-key-for-ci
+        DB_NAME: alacogi-test-db
+        JWT_SECRET: 60d580163a8f10114496b56d6fcf8808
       run: npm run test:integration
