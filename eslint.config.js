@@ -21,7 +21,7 @@ module.exports = [
     languageOptions: {
       parser: tsparser,
       parserOptions: {
-        project: './tsconfig.json',
+        project: './tsconfig.eslint.json',
         tsconfigRootDir: __dirname,
         sourceType: 'module',
       },
@@ -39,7 +39,7 @@ module.exports = [
     },
     plugins: {
       '@typescript-eslint': tseslint,
-      'prettier': prettierPlugin,
+      prettier: prettierPlugin,
     },
     rules: {
       ...eslint.configs.recommended.rules,
@@ -83,8 +83,8 @@ module.exports = [
       'prefer-const': 'error',
       'prefer-arrow-callback': 'error',
       'no-param-reassign': 'error',
-      'eqeqeq': ['error', 'always'],
-      'curly': ['error', 'all'],
+      eqeqeq: ['error', 'always'],
+      curly: ['error', 'all'],
       'no-throw-literal': 'error',
       'prefer-promise-reject-errors': 'error',
 
@@ -135,7 +135,7 @@ module.exports = [
     },
     plugins: {
       '@typescript-eslint': tseslint,
-      'prettier': prettierPlugin,
+      prettier: prettierPlugin,
     },
     rules: {
       ...eslint.configs.recommended.rules,
