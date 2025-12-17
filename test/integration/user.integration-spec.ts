@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { Server } from 'http';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { AuthModule } from '../../src/auth/auth.module';
@@ -20,11 +21,13 @@ describe('User Integration Tests', () => {
   beforeEach(async () => {
     await clearDatabase(dataSource);
 
-    const registerResponse = await request(app.getHttpServer()).post('/api/v1/auth/register').send({
-      email: 'test@example.com',
-      password: 'SecurePass123!',
-      name: 'Max Mustermann',
-    });
+    const registerResponse = await request(app.getHttpServer() as Server)
+      .post('/api/v1/auth/register')
+      .send({
+        email: 'test@example.com',
+        password: 'SecurePass123!',
+        name: 'Max Mustermann',
+      });
 
     authToken = registerResponse.body.access_token;
   });
@@ -35,7 +38,7 @@ describe('User Integration Tests', () => {
 
   describe('GET /api/v1/users', () => {
     it('sollte alle Benutzer zurückgeben', async () => {
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .get('/api/v1/users')
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
@@ -46,13 +49,15 @@ describe('User Integration Tests', () => {
     });
 
     it('sollte ohne Token einen 401 Fehler zurückgeben', async () => {
-      await request(app.getHttpServer()).get('/api/v1/users').expect(401);
+      await request(app.getHttpServer() as Server)
+        .get('/api/v1/users')
+        .expect(401);
     });
   });
 
   describe('GET /api/v1/users/me', () => {
     it('sollte das eigene Profil zurückgeben', async () => {
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .get('/api/v1/users/me')
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
@@ -63,7 +68,9 @@ describe('User Integration Tests', () => {
     });
 
     it('sollte ohne Token einen 401 Fehler zurückgeben', async () => {
-      await request(app.getHttpServer()).get('/api/v1/users/me').expect(401);
+      await request(app.getHttpServer() as Server)
+        .get('/api/v1/users/me')
+        .expect(401);
     });
   });
 });

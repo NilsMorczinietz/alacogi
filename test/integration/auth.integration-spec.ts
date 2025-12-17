@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { Server } from 'http';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { AuthModule } from '../../src/auth/auth.module';
@@ -32,7 +33,7 @@ describe('Auth Integration Tests', () => {
         name: 'Max Mustermann',
       };
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/api/v1/auth/register')
         .send(registerData)
         .expect(201);
@@ -50,12 +51,12 @@ describe('Auth Integration Tests', () => {
         name: 'Max Mustermann',
       };
 
-      await request(app.getHttpServer())
+      await request(app.getHttpServer() as Server)
         .post('/api/v1/auth/register')
         .send(registerData)
         .expect(201);
 
-      await request(app.getHttpServer())
+      await request(app.getHttpServer() as Server)
         .post('/api/v1/auth/register')
         .send(registerData)
         .expect(409);
@@ -70,14 +71,16 @@ describe('Auth Integration Tests', () => {
         name: 'Max Mustermann',
       };
 
-      await request(app.getHttpServer()).post('/api/v1/auth/register').send(registerData);
+      await request(app.getHttpServer() as Server)
+        .post('/api/v1/auth/register')
+        .send(registerData);
 
       const loginData = {
         email: 'test@example.com',
         password: 'SecurePass123!',
       };
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .post('/api/v1/auth/login')
         .send(loginData)
         .expect(201);
@@ -93,7 +96,10 @@ describe('Auth Integration Tests', () => {
         password: 'WrongPassword123!',
       };
 
-      await request(app.getHttpServer()).post('/api/v1/auth/login').send(loginData).expect(401);
+      await request(app.getHttpServer() as Server)
+        .post('/api/v1/auth/login')
+        .send(loginData)
+        .expect(401);
     });
   });
 
@@ -105,13 +111,13 @@ describe('Auth Integration Tests', () => {
         name: 'Max Mustermann',
       };
 
-      const registerResponse = await request(app.getHttpServer())
+      const registerResponse = await request(app.getHttpServer() as Server)
         .post('/api/v1/auth/register')
         .send(registerData);
 
       const token = registerResponse.body.access_token;
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as Server)
         .get('/api/v1/auth/profile')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
@@ -121,7 +127,9 @@ describe('Auth Integration Tests', () => {
     });
 
     it('sollte ohne Token einen 401 Fehler zurückgeben', async () => {
-      await request(app.getHttpServer()).get('/api/v1/auth/profile').expect(401);
+      await request(app.getHttpServer() as Server)
+        .get('/api/v1/auth/profile')
+        .expect(401);
     });
   });
 });

@@ -3,11 +3,11 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 // Test-Datenbank-Konfiguration
 export const testDbConfig: DataSourceOptions = {
   type: 'postgres',
-  host: process.env.DB_HOST ?? 'localhost',
-  port: parseInt(process.env.DB_PORT ?? '5433', 10),
-  username: process.env.DB_USER ?? 'testuser',
-  password: process.env.DB_PASSWORD ?? 'testpass',
-  database: process.env.DB_NAME ?? 'alacogi_test',
+  host: 'localhost',
+  port: 5433,
+  username: 'testuser',
+  password: 'testpass',
+  database: 'alacogi_test',
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: true, // Automatisch Schema erstellen für Tests
   dropSchema: true, // Schema vor jedem Test-Run löschen
