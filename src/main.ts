@@ -39,9 +39,9 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(3000);
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('Server läuft auf http://localhost:3000/api/v1');
-  // eslint-disable-next-line no-console, no-undef
+  // eslint-disable-next-line no-console
   console.log('API Dokumentation verfügbar unter http://localhost:3000/api/docs');
 }
 

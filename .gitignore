@@ -1,3 +1,10 @@
 node_modules
 dist
 .env
+
+# Test coverage
+coverage
+*.lcov
+
+# Test files
+.env.test.local

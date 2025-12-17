@@ -1,22 +1,42 @@
 name: CI Pipeline
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: alacogi_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: '20'
+        cache: 'npm'
 
     - name: Install dependencies
-      run: npm install
+      run: npm ci
 
     - name: Lint code
       run: npm run lint
@@ -24,8 +44,15 @@ jobs:
     - name: Check code format
       run: npm run format:check
 
-    - name: Format code
-      run: npm run format
-
     - name: Compile the project
       run: npm run build
+
+    - name: Run Integration Tests
+      env:
+        DB_HOST: localhost
+        DB_PORT: 5433
+        DB_USER: testuser
+        DB_PASSWORD: testpass
+        DB_NAME: alacogi_test
+        JWT_SECRET: test-secret-key-for-ci
+      run: npm run test:integration

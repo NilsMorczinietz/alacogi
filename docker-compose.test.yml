@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: alacogi-test-db
+    ports:
+      - "5433:5432"  # Anderer Port um nicht mit Dev-DB zu kollidieren
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: alacogi_test
+    tmpfs:
+      - /var/lib/postgresql/data  # In-Memory für schnellere Tests
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser -d alacogi_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
