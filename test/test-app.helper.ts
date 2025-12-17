@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { testDbConfig } from './test-db.helper';
@@ -16,7 +16,7 @@ export async function createTestApp(moduleImports: any[]): Promise<{
     imports: [
       ConfigModule.forRoot({
         isGlobal: true,
-        envFilePath: '.env.test',
+        // envFilePath: '.env.test',
       }),
       TypeOrmModule.forRoot(testDbConfig),
       ...moduleImports,

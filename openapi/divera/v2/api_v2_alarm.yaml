@@ -1,0 +1,965 @@
+openapi: 3.0.1
+info:
+  title: DIVERA 24/7 RESTful Webservice fÃ¼r Alarmierungen
+  description:
+    "Die API von DIVERA 24/7 bietet zahlreiche MÃ¶glichkeiten, um eigene Dienste anzubinden und Aktionen auszulÃ¶sen. FÃ¼r Testzwecke empfehlen wir Ihnen, eine separate Einheit anzulegen. Testeinheiten von zahlenden Kunden werden auf Nachfrage kostenfrei hochgestuft.
+    \n\nBeachten Sie als Nutzer der kostenlosen Version: Innerhalb von fÃ¼nf Minuten kann nur eine Alarmierung ausgelÃ¶st werden.
+    Gespeichert wird nur das Einsatz-Stichwort.
+    Sie kÃ¶nnen die ALARM-Version mit unbegrenzter Schnittstelle unverbindlich 30 Tage lang testen.
+    Den Test beantragen Sie nach dem Login im Browser unter Verwaltung > Konto > Kontakt- und Vertragsdaten."
+  version: 4.0.2
+servers:
+  - url: https://app.divera247.com
+tags:
+  - name: CRUD
+    description: Die wichtigsten Methoden zum Erstellen, Bearbeiten, Archivieren und LÃ¶schen von Alarmierungen
+  - name: Weitere
+    description: ZusÃ¤tzliche Methoden um auf Alarmierungen zu reagieren
+paths:
+  /api/v2/alarms:
+    get:
+      tags:
+        - CRUD
+      summary: Methode zum Abrufen aller nicht archivierten Alarmierungen
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: object
+                        description: Liste der einzelnen Alarmierungen nach ID
+                        additionalProperties:
+                          $ref: '#/components/schemas/alarm-result'
+                      sorting:
+                        type: array
+                        description: Reihenfolge der Alarmierungen, aufsteigend
+                        items:
+                          type: integer
+                  ucr:
+                    type: integer
+                    description: ID der UserClusterRelation im aktuellen Request
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+    post:
+      tags:
+        - CRUD
+      summary: Methode zum Erstellen einer neuen Alarmierung
+      requestBody:
+        description: Parameter im JSON-Format
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/alarm-input'
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/alarm-result'
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/list:
+    get:
+      tags:
+        - CRUD
+      summary: Methode zum Abrufen aller Alarmierungen
+      parameters:
+        - in: query
+          name: closed
+          schema:
+            type: integer
+          description: Wenn der Wert "0" Ã¼betragen wird, werden nur die nicht geschlossenen Alarmierungen angezeigt
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/alarm-result'
+                  ucr:
+                    type: integer
+                    description: ID der UserClusterRelation im aktuellen Request
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/{id}:
+    get:
+      tags:
+        - CRUD
+      summary: Methode zum Anzeigen der Alarmierung anhand der Einsatz ID
+      parameters:
+        - name: id
+          in: path
+          description: Einsatz ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/alarm-result'
+                  ucr:
+                    type: integer
+                    description: ID der UserClusterRelation im aktuellen Request
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+    put:
+      tags:
+        - CRUD
+      summary: Methode zum Bearbeiten der Alarmierung anhand der Einsatz ID
+      parameters:
+        - name: id
+          in: path
+          description: ID des Einsatzes, der bearbeitet werden soll.
+          required: true
+          schema: {}
+      requestBody:
+        description: Parameter im JSON-Format
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/alarm-input'
+        required: true
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/alarm-result'
+                  ucr:
+                    type: integer
+                    description: ID der UserClusterRelation im aktuellen Request
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+    delete:
+      tags:
+        - CRUD
+      summary: Methode zum LÃ¶schen der Alarmierung
+      parameters:
+        - name: id
+          in: path
+          description: ID des Einsatzes
+          required: true
+          schema: {}
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/success'
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/attachment/{id}:
+    post:
+      tags:
+        - CRUD
+      summary: Methode zum HinzufÃ¼gen eines Anhangs
+      parameters:
+        - name: id
+          in: path
+          description: ID der Nachricht
+          required: true
+          schema: {}
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - Attachment[upload]
+                - Attachment[title]
+                - Attachment[description]
+              properties:
+                Attachment[upload]:
+                  description: Der Anhang als binary-string
+                  type: string
+                Attachment[title]:
+                  description: Titel des Anhangs
+                  type: string
+                Attachment[description]:
+                  description: Beschreibung des Anhangs
+                  type: string
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/success'
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/archive/{id}:
+    post:
+      tags:
+        - CRUD
+      summary: Methode zum Archivieren der Alarmierung
+      parameters:
+        - name: id
+          in: path
+          description: ID des Einsatzes
+          required: true
+          schema: {}
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/success'
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/confirm/{id}:
+    post:
+      tags:
+        - Weitere
+      summary: Methode zum Erstellen einer RÃ¼ckmeldung
+      parameters:
+        - name: id
+          in: path
+          description: ID des Einsatzes, zu dem eine RÃ¼ckmeldung erfolgen soll
+          required: true
+          schema: {}
+      requestBody:
+        description: Parameter im JSON-Format
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Status:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: ID des Status
+                    note:
+                      type: string
+                      description: Freitext-RÃ¼ckmeldung
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/success'
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/read/{id}:
+    post:
+      tags:
+        - Weitere
+      summary: Methode um die Alarmierung als gelesen zu markieren
+      parameters:
+        - name: id
+          in: path
+          description: ID des Einsatzes, der gelesen wurde
+          required: true
+          schema: {}
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/success'
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/close/{id}:
+    post:
+      tags:
+        - Weitere
+      summary: Methode zum SchlieÃŸen einer offenen Alarmierung (je nach Setup um den Einsatz im Monitor zu verbergen und die RÃ¼ckmeldung einzuschrÃ¤nken)
+      parameters:
+        - name: id
+          in: path
+          description: ID des Einsatzes, welcher geschlossen werden soll
+          required: true
+      requestBody:
+        description: Parameter im JSON-Format
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Alarm:
+                  type: object
+                  properties:
+                    closed:
+                      type: boolean
+                      description: Zustand geschlossen oder geÃ¶ffnet
+                    report:
+                      type: string
+                      description: Einsatzbericht
+                    ts:
+                      type: integer
+                      description: Datum/Uhrzeit als Unix-Timestamp
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/success'
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/reach/{id}:
+    get:
+      tags:
+        - Weitere
+      summary: Methode um die Reichweite (emfangen, gelesen, beantwortet) abzurufen
+      parameters:
+        - name: id
+          in: path
+          description: ID des Einsatzes
+          required: true
+          schema: {}
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      transports:
+                        type: object
+                        description: Abgeschlossene Versand-Prozesse
+                      received:
+                        type: object
+                        description: Benachrichtigung erhalten (Push/Pager/SMS/Anruf)
+                      viewed:
+                        type: object
+                        description: Meldung gelesen
+                      confirmed:
+                        type: object
+                        description: Aktive RÃ¼ckmeldung
+                  ucr:
+                    type: integer
+                    description: ID der UserClusterRelation im aktuellen Request
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/download/{id}:
+    get:
+      tags:
+        - Weitere
+      summary: Methode zum Herunterladen des Einsatzes inkl. RÃ¼ckmeldungen und Statusverlauf als PDF-Datei
+      parameters:
+        - name: id
+          in: path
+          description: ID des Einsatzes
+          required: true
+          schema: {}
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/success'
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+  /api/v2/alarms/reset-responses/{id}:
+    delete:
+      tags:
+        - Weitere
+      summary: Methode zum RÃ¼cksetzen von RÃ¼ckmeldungen einer Alarmierung
+      parameters:
+        - name: id
+          in: path
+          description: ID des Einsatzes
+          required: true
+          schema: {}
+      responses:
+        200:
+          description: successful
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/success'
+        403:
+          description: Accesskey fehlt oder ungÃ¼ltig
+          content: {}
+        404:
+          description: Objekt nicht gefunden oder Zugriff nicht gestattet
+          content: {}
+      security:
+        - Personal-API-Accesskey: []
+
+components:
+  schemas:
+    success:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: TRUE
+        data:
+          type: object
+        ucr:
+          type: integer
+          description: ID der UserClusterRelation im aktuellen Request
+
+    alarm-input:
+      type: object
+      properties:
+        Alarm:
+          type: object
+          required:
+            - title
+            - notification_type
+          properties:
+            foreign_id:
+              type: string
+              example: 2019-1023
+              description: Einsatznummer/FremdschlÃ¼ssel
+            alarmcode_id:
+              type: number
+              example: 123456789
+              description: ID der Alarmvorlage (Achtung, die Vorgaben der Vorlage werden nicht automatisch auf den Alarm Ã¼bertragen)
+            priority:
+              type: boolean
+              description: PrioritÃ¤t/Sonderrechte
+            title:
+              type: string
+              example: FEUER3
+              description: Stichwort
+            text:
+              type: string
+              example: Unklare Rauchentwicklung im Hafen
+              description: Meldung
+            address:
+              type: string
+              example: HauptstraÃŸe 247, 12345 Musterstadt
+              description: Einsatzort
+            lat:
+              type: number
+              description: Breitengrad
+            lng:
+              type: number
+              description: LÃ¤ngengrad
+            scene_object:
+              description: Angaben zum Objekt/GebÃ¤ude
+              type: string
+            caller:
+              description: Angaben zur meldenden Personen
+              type: string
+            patient:
+              description: Angaben zum Patienten
+              type: string
+            remark:
+              description: Bemerkungen/Hinweise fÃ¼r die EinsatzkrÃ¤fte
+              type: string
+            units:
+              description: Beteiligte Einsatzmittel
+              type: string
+            destination:
+              description: Gibt es ein Fahrtziel?
+              type: boolean
+            destination_address:
+              description: Adresse des Fahrtziels
+              type: string
+            destination_lat:
+              description: Breitengrad des Fahrtziels
+              type: number
+              format: float
+            destination_lng:
+              description: LÃ¤ngengrad des Fahrtziels
+              type: number
+              format: float
+            additional_text_1:
+              description: Zusatz 1
+              type: string
+            additional_text_2:
+              description: Zusatz 2
+              type: string
+            additional_text_3:
+              description: Zusatz 3
+              type: string
+            report:
+              type: string
+              example: 2 Einsatztabschnitte gebildet, 3 C-Rohre im Einsatz
+              description: Einsatzbericht
+            private_mode:
+              type: boolean
+              description: Sichtbarkeit privat
+            notification_type:
+              type: number
+              description: EmpfÃ¤nger-Auswahl (1 = AusgewÃ¤hlte Standorte (nur in der PRO-Version), 2 = Alle des Standortes, 3 = AusgewÃ¤hlte Gruppen, 4 = AusgewÃ¤hlte Benutzer)
+            notification_filter_vehicle:
+              type: boolean
+              description: Nur Personen alarmieren, die sich auf einem zugeteilten Fahrzeuge befinden
+            notification_filter_status:
+              type: boolean
+              description: Nur Personen alarmieren, die sich in einem bestimmten Status befinden
+            notification_filter_access:
+              type: boolean
+              description: Einsatz auch fÃ¼r nicht alarmierte EmpfÃ¤nger sichtbar machen
+            send_push:
+              type: boolean
+              description: Push-Nachricht an die App senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt)
+            send_sms:
+              type: boolean
+              description: SMS senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt, kostenpflichtig)
+            send_call:
+              type: boolean
+              description: Sprachanruf senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt, kostenpflichtig)
+            send_mail:
+              type: boolean
+              description: E-Mail senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt, Adresse muss zuvor durch den Benutzer bestÃ¤tigt werden)
+            send_pager:
+              type: boolean
+              description: An verknÃ¼pfte Pager senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt, je nach Setup e*Message-/UNITRONIC-/TETRA-Pager)
+            response_time:
+              type: number
+              description: RÃ¼ckmeldung innerhalb des Zeitraums in Sekunden
+            closed:
+              type: boolean
+              description: Einsatz beendet
+            ts_close:
+              type: number
+              description: Einsatzende als UNIX-Timestamp
+            ts_publish:
+              type: number
+              description: Alarmierung zeitgesteuert auslÃ¶sen nach UNIX-Timestamp
+            notification_filter_status_access:
+              type: boolean
+              description: deprecated, nicht mehr verwenden (die neue Eigenschaft lautet 'notification_filter_access')
+            long:
+              type: number
+              description: deprecated, nicht mehr verwenden (die neue Eigenschaft lautet 'lng')
+            type:
+              type: string
+              description: deprecated, nicht mehr verwenden (die neue Eigenschaft lautet 'title')
+            uploads:
+              type: string
+              description: AnhÃ¤nge uploaden als Binary
+              example: Binary
+            cluster:
+              type: array
+              description: IDs der Standorte mit EmpfÃ¤nger-Auswahl (nur fÃ¼r einheitsÃ¼bergreifende Alarmierungen in der PRO-Version, bedingt 'notification_type' = 1)
+              example:
+                {
+                  '123': { 'notification_type': 2 },
+                  '456': { 'notification_type': 3 },
+                  '789': { 'notification_type': 4 },
+                }
+              items:
+                type: object
+                description: ID der Untereinheit der Index, als Wert im Objekt den Typ der EmpfÃ¤nger-Auswahl innerhalb der Untereinheit, die IDs der Gruppen und Benutzer in den Ã¼bergeordneten Arrays 'usingGroups' und 'usingUserClusterRelations' Ã¼bermitteln)
+                properties:
+                  notification_type:
+                    type: integer
+            group:
+              type: array
+              example: [1, 2, 3, 4]
+              description: IDs der Gruppen (bedingt 'notification_type' = 1 oder 3). Statt der IDs kann Ã¼ber die Angabe in `instructions.group` auch der Name der Gruppe Ã¼bergeben werden.
+              items:
+                type: integer
+            user_cluster_relation:
+              type: array
+              example: [1, 2, 3, 4]
+              description: IDs der Benutzer (bedingt 'notification_type' = 1 oder 4). Statt der IDs kann Ã¼ber die Angabe in `instructions.user_cluster_relation` auch der eingetragene FremdschlÃ¼ssel des Nutzers oder Status-IDs Ã¼bergeben werden.
+              items:
+                type: integer
+            vehicle:
+              type: array
+              example: [1, 2, 3, 4]
+              description: IDs der Fahrzeuge/Einsatzmittel. Statt der IDs kann Ã¼ber Angabe in `instructions.vehicle` auch der eingetragene Funkrufname, RIC, ISSI usw. des Fahrzeugs verwendet werden.
+              items:
+                type: integer
+            status:
+              type: array
+              description: IDs der ausgewÃ¤hlten Status (notification_filter_status = TRUE). Statt der IDs kann Ã¼ber Angabe in `instructions.status` auch der eingetragene Funkrufname, RIC, ISSI usw. des Fahrzeugs verwendet werden.
+              items:
+                type: integer
+        instructions:
+          type: object
+          properties:
+            cluster:
+              type: object
+              properties:
+                mapping:
+                  type: string
+                  example: id
+                  description: 'MÃ¶gliche Werte: id (PrimÃ¤rschlÃ¼ssel), title (Bezeichnung)'
+            group:
+              type: object
+              properties:
+                mapping:
+                  type: string
+                  example: id
+                  description: 'MÃ¶gliche Werte: id (PrimÃ¤rschlÃ¼ssel), title (Bezeichnung)'
+            user_cluster_relation:
+              type: object
+              properties:
+                mapping:
+                  type: string
+                  example: id
+                  description: 'MÃ¶gliche Werte: id (PrimÃ¤rschlÃ¼ssel), foreign_id (FremdschlÃ¼ssel), status_id (Aktuelle ID des Status)'
+            vehicle:
+              type: object
+              properties:
+                mapping:
+                  type: string
+                  example: id
+                  description: 'MÃ¶gliche Werte: id (PrimÃ¤rschlÃ¼ssel), name (Funkrufname), number (Kennzeichen), ric (Alarmierungs-RIC), issi (Individual Short Subscriber Identity), opta (Operativ-taktische Adresse), fmsstatus_id (Fahrzeug-Status ID)'
+    alarm-result:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 123
+          description: ID/PrimÃ¤rschlÃ¼ssel
+        foreign_id:
+          type: string
+          example: 2019-1023
+          description: Einsatznummer/FremdschlÃ¼ssel
+        author_id:
+          type: integer
+          example: 123456789
+          description: ID des Nutzers (UserClusterRelation)
+        alarmcode_id:
+          type: integer
+          example: 123456789
+          description: ID der Alarmvorlage (Alarmcode)
+        date:
+          type: integer
+          description: Alarmierungszeit als UNIX-Timestamp
+        priority:
+          type: boolean
+          description: PrioritÃ¤t/Sonderrechte
+        title:
+          type: string
+          example: FEUER3
+          description: Stichwort
+        text:
+          type: string
+          example: Unklare Rauchentwicklung im Hafen
+          description: Meldung
+        address:
+          type: string
+          example: HauptstraÃŸe 247, 12345 Musterstadt
+          description: Einsatzort
+        lat:
+          type: number
+          description: Breitengrad
+        lng:
+          type: number
+          description: LÃ¤ngengrad
+        scene_object:
+          type: string
+          description: Angaben zum Objekt/GebÃ¤ude
+        caller:
+          type: string
+          description: Angaben zur meldenden Personen
+        patient:
+          type: string
+          description: Angaben zum Patienten
+        remark:
+          type: string
+          description: Bemerkungen/Hinweise fÃ¼r die EinsatzkrÃ¤fte
+        units:
+          type: string
+          description: Beteiligte Einsatzmittel
+        destination:
+          type: boolean
+          description: Gibt es ein Fahrtziel?
+        destination_address:
+          type: string
+          description: Adresse des Fahrtziels
+        destination_lat:
+          type: number
+          description: Breitengrad des Fahrtziels
+        destination_lng:
+          type: number
+          description: LÃ¤ngengrad des Fahrtziels
+        additional_text_1:
+          type: string
+          description: Zusatz 1
+        additional_text_2:
+          type: string
+          description: Zusatz 2
+        additional_text_3:
+          type: string
+          description: Zusatz 3
+        report:
+          type: string
+          example: 2 Einsatztabschnitte gebildet, 3 C-Rohre im Einsatz
+          description: Einsatzbericht
+        cluster:
+          type: array
+          items:
+            type: integer
+          description: IDs der Standorte (bedingt 'notification_type' = 1)
+        group:
+          type: array
+          items:
+            type: integer
+          description: IDs der Gruppen (bedingt 'notification_type' = 1 oder 3)
+        user_cluster_relation:
+          type: array
+          items:
+            type: integer
+          description: IDs der Benutzer (bedingt 'notification_type = 1 oder 4)
+        vehicle:
+          type: array
+          items:
+            type: string
+          description: IDs der Fahrzeuge/Einsatzmittel
+        private_mode:
+          type: boolean
+          description: Sichtbarkeit privat
+        notification_type:
+          type: integer
+          description: EmpfÃ¤nger-Auswahl (1 = AusgewÃ¤hlte Standorte, 2 = Alle des Standortes, 3 = AusgewÃ¤hlte Gruppen, 4 = AusgewÃ¤hlte Benutzer)
+        notification_filter_vehicle:
+          type: boolean
+          description: Nur Personen alarmieren, die sich auf einem zugeteilten Fahrzeuge befinden
+        notification_filter_status:
+          type: boolean
+          description: Nur Personen alarmieren, die sich in einem bestimmten Status befinden
+        notification_filter_access:
+          type: boolean
+          description: Einsatz auch fÃ¼r nicht benachrichtigte EmpfÃ¤nger sichtbar machen
+        notification_filter_status_ids:
+          type: array
+          items:
+            type: integer
+          description: IDs der ausgewÃ¤hlten Status (notification_filter_status = TRUE)
+        send_push:
+          type: boolean
+          description: Push-Nachricht an die App senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt)
+        send_sms:
+          type: boolean
+          description: SMS senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt, kostenpflichtig)
+        send_call:
+          type: boolean
+          description: Sprachanruf senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt, kostenpflichtig)
+        send_mail:
+          type: boolean
+          description: E-Mail senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt, Adresse muss zuvor durch den Benutzer bestÃ¤tigt werden)
+        send_pager:
+          type: boolean
+          description: An verknÃ¼pfte Pager senden (der Wert wird nach dem Versand auf FALSE zurÃ¼ckgesetzt, je nach Setup e*Message-/UNITRONIC-/TETRA-Pager)
+        response_time:
+          type: integer
+          description: RÃ¼ckmeldung innerhalb des Zeitraums in Minuten
+        closed:
+          type: boolean
+          description: Einsatz beendet
+        new:
+          type: boolean
+          description: Neu/Umngelesen
+        editable:
+          type: boolean
+          description: Bearbeitbar
+        answerable:
+          type: boolean
+          description: Beantwortbar
+        hidden:
+          type: boolean
+          description: Entwurf
+        deleted:
+          type: boolean
+          description: Im Archiv, nur noch fÃ¼r Schreibberechtigte zugÃ¤nglich
+        ucr_adressed:
+          type: array
+          items:
+            type: integer
+          description: Adressierte Benutzer
+        ucr_answered:
+          type: array
+          items:
+            type: integer
+          description: RÃ¼ckmeldungen der Benutzer
+        ucr_self_addressed:
+          type: boolean
+          description: Selbst adressiert, RÃ¼ckmeldung ist mÃ¶glich
+        ucr_self_status_id:
+          type: integer
+          description: Eigene RÃ¼ckmeldung (ID des Status)
+        ucr_self_note:
+          type: string
+          description: Eigene RÃ¼ckmeldung (Freitext)
+        count_recipients:
+          type: integer
+          description: Anzahl der EmpfÃ¤nger
+        count_read:
+          type: integer
+          description: Anzahl gelesen
+        ts_response:
+          type: integer
+          description: Berechneter UNIX-Timestamp fÃ¼r RÃ¼ckmeldung bis (gemÃ¤ÃŸ response_time)
+        ts_publish:
+          type: integer
+          description: UNIX-Timestamp fÃ¼r zeitgesteuerte Alarmierung
+        ts_close:
+          type: integer
+          description: UNIX-Timestamp Einsatzende
+        ts_create:
+          type: integer
+          description: UNIX-Timestamp des Erstelldatums
+        ts_update:
+          type: integer
+          description: UNIX-Timestamp zuletzt bearbeitet
+        notification_filter_status_access:
+          type: boolean
+          description: deprecated, nicht mehr verwenden (die neue Eigenschaft lautet 'notification_filter_access')
+        custom:
+          type: array
+          description: Liste von weitere Daten, die im Zusammenhang mit der Operation entegegen genommen werden sollen, jedoch bisher nicht Ã¼ber ein Feld abgebildet werden.
+          items:
+            type: object
+            description: Datenendpunkt, welcher der Operation angefÃ¼gt werden soll.
+            properties:
+              key:
+                type: string
+                description: Eindeutiger key des Daten-Punktes
+                example: hydrant-book
+                minLength: 1
+                maxLength: 64
+              title:
+                type: string
+                description: Titel des Daten-Punktes
+                example: Seite und Planquardrat im Planbuch/Hydrantenbuch
+                minLength: 1
+                maxLength: 255
+              value:
+                type: string
+                description: Wert des Daten-Punktes
+                example: 15 H2
+                minLength: 0
+                maxLength: 64000
+          example:
+            - key: hydrant-book
+              title: Seite und Planquardrat im Planbuch/Hydrantenbuch
+              value: 15 H2
+            - key: trigger
+              title: Anruferweg
+              value: Call to 19222
+
+  securitySchemes:
+    Personal-API-Accesskey:
+      type: apiKey
+      name: accesskey
+      in: query
