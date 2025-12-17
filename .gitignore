@@ -8,3 +8,8 @@ coverage
 
 # Test files
 .env.test.local
+
+# Compiled test files
+test/**/*.js
+test/**/*.js.map
+test/**/*.d.ts

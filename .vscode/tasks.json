@@ -24,32 +24,10 @@
       }
     },
     {
-      "label": "Docker: Up (Production)",
-      "type": "shell",
-      "command": "docker-compose up --build",
-      "problemMatcher": [],
-      "isBackground": true,
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      }
-    },
-    {
       "label": "Docker: Down",
       "type": "shell",
       "command": "docker-compose down",
       "problemMatcher": []
-    },
-    {
-      "label": "Docker: Logs",
-      "type": "shell",
-      "command": "docker-compose logs -f backend",
-      "problemMatcher": [],
-      "isBackground": true,
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      }
     },
     {
       "label": "Build",
