@@ -17,14 +17,14 @@ export abstract class GenericIdTransformer<T extends GenericId> implements Value
   /**
    * Transforms typed ID to database column (string/UUID)
    */
-  to(value: T | null | undefined): string | null {
-    return value ? value.getId() : null;
+  public to(value: T | null | undefined): string | null {
+    return value !== null && value !== undefined ? value.getId() : null;
   }
 
   /**
    * Transforms database column (string/UUID) to typed ID
    */
-  from(value: string | null | undefined): T | null {
-    return value ? this.factory(value) : null;
+  public from(value: string | null | undefined): T | null {
+    return value !== null && value !== undefined && value !== '' ? this.factory(value) : null;
   }
 }

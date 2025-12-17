@@ -8,7 +8,7 @@ export class UserCreateDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  public name: string;
 
   @ApiProperty({
     description: 'Die E-Mail-Adresse des Benutzers',
@@ -16,5 +16,5 @@ export class UserCreateDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  public email: string;
 }

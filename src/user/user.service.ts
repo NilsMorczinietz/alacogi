@@ -14,21 +14,21 @@ export class UserService {
   /**
    * Find all users (without password)
    */
-  findAll(): Promise<User[]> {
+  public findAll(): Promise<User[]> {
     return this.userRepository.find();
   }
 
   /**
    * Find user by ID (without password)
    */
-  findById(id: UserId): Promise<User | null> {
+  public findById(id: UserId): Promise<User | null> {
     return this.userRepository.findOne({ where: { id } });
   }
 
   /**
    * Find user by email (without password by default)
    */
-  findByEmail(email: string, includePassword = false): Promise<User | null> {
+  public findByEmail(email: string, includePassword = false): Promise<User | null> {
     if (includePassword) {
       return this.userRepository.findOne({
         where: { email },
@@ -41,7 +41,11 @@ export class UserService {
   /**
    * Create user with hashed password (used by AuthService)
    */
-  async createWithPassword(email: string, name: string, hashedPassword: string): Promise<User> {
+  public async createWithPassword(
+    email: string,
+    name: string,
+    hashedPassword: string,
+  ): Promise<User> {
     const user = this.userRepository.create({
       email,
       name,

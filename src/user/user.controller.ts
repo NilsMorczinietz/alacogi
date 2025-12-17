@@ -15,7 +15,7 @@ export class UserController {
   @ApiOperation({ summary: 'Alle Benutzer abrufen' })
   @ApiResponse({ status: 200, description: 'Liste aller Benutzer', type: [UserGetDto] })
   @ApiResponse({ status: 401, description: 'Nicht authentifiziert' })
-  async findAll(): Promise<UserGetDto[]> {
+  public async findAll(): Promise<UserGetDto[]> {
     return this.userService.findAll();
   }
 
@@ -25,7 +25,7 @@ export class UserController {
   @ApiOperation({ summary: 'Eigenes Benutzerprofil abrufen' })
   @ApiResponse({ status: 200, description: 'Profil erfolgreich abgerufen', type: UserGetDto })
   @ApiResponse({ status: 401, description: 'Nicht authentifiziert' })
-  getProfile(@Request() req): UserGetDto {
+  public getProfile(@Request() req: { user: UserGetDto }): UserGetDto {
     return req.user;
   }
 }

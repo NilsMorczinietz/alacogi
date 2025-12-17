@@ -15,12 +15,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
+  public async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
     const { email, password, name } = registerDto;
 
     // Check if user already exists
     const existingUser = await this.userService.findByEmail(email);
-    if (existingUser) {
+    if (existingUser !== null) {
       throw new ConflictException('Email bereits registriert');
     }
 
@@ -42,13 +42,13 @@ export class AuthService {
     };
   }
 
-  async login(loginDto: LoginDto): Promise<AuthResponseDto> {
+  public async login(loginDto: LoginDto): Promise<AuthResponseDto> {
     const { email, password } = loginDto;
 
     // Load user with password (password is not loaded by default)
     const user = await this.userService.findByEmail(email, true);
 
-    if (!user) {
+    if (user === null) {
       throw new UnauthorizedException('Ungültige Anmeldedaten');
     }
 
@@ -63,13 +63,11 @@ export class AuthService {
 
     return {
       access_token: token,
-      user: {email,
-        name: user.name,
-      },
+      user: { email, name: user.name },
     };
   }
 
-  async validateUser(userId: UserId) {
+  public async validateUser(userId: UserId): Promise<User | null> {
     return this.userService.findById(userId);
   }
 

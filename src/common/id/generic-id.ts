@@ -18,7 +18,7 @@ export abstract class GenericId {
   }
 
   public equals(other: GenericId | null | undefined): boolean {
-    if (!other) {
+    if (other === null || other === undefined) {
       return false;
     }
     return this.id === other.id;

@@ -8,16 +8,16 @@ export class User {
     type: 'uuid',
     transformer: new UserIdTransformer(),
   })
-  id: UserId;
+  public id: UserId;
 
   @Column()
-  name: string;
+  public name: string;
 
   @Column({ unique: true })
-  email: string;
+  public email: string;
 
   @Column({ select: false })
-  password: string;
+  public password: string;
 
   constructor() {
     this.id = new UserId();

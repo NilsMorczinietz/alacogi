@@ -16,7 +16,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Neuen Benutzer registrieren' })
   @ApiResponse({ status: 201, description: 'Registrierung erfolgreich', type: AuthResponseDto })
   @ApiResponse({ status: 409, description: 'Email bereits registriert' })
-  async register(@Body() registerDto: RegisterDto): Promise<AuthResponseDto> {
+  public async register(@Body() registerDto: RegisterDto): Promise<AuthResponseDto> {
     return this.authService.register(registerDto);
   }
 
@@ -24,7 +24,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Benutzer einloggen' })
   @ApiResponse({ status: 200, description: 'Login erfolgreich', type: AuthResponseDto })
   @ApiResponse({ status: 401, description: 'Ungültige Anmeldedaten' })
-  async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
+  public async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(loginDto);
   }
 
@@ -34,7 +34,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Aktuelles Benutzerprofil abrufen' })
   @ApiResponse({ status: 200, description: 'Profil erfolgreich abgerufen', type: UserGetDto })
   @ApiResponse({ status: 401, description: 'Nicht authentifiziert' })
-  getProfile(@Request() req): UserGetDto {
+  public getProfile(@Request() req: { user: UserGetDto }): UserGetDto {
     return req.user;
   }
 }
