@@ -1,10 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
+import { AuthModule } from '../../src/auth/auth.module';
+import { UserModule } from '../../src/modules/user/user.module';
 import { createTestApp } from '../test-app.helper';
 import { clearDatabase } from '../test-db.helper';
-import { AuthModule } from '../../src/auth/auth.module';
-import { UserModule } from '../../src/user/user.module';
 
 describe('Auth Integration Tests', () => {
   let app: INestApplication;

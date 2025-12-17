@@ -1,4 +1,4 @@
-import { GenericId } from 'src/common/id/generic-id';
+import { GenericId } from '../../../common/id/generic-id';
 
 export class UserId extends GenericId {
   constructor();

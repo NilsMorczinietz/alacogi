@@ -1,4 +1,4 @@
-import { GenericIdTransformer } from 'src/common/id/generic-id.transformer';
+import { GenericIdTransformer } from '../../../common/id/generic-id.transformer';
 import { UserId } from './user-id';
 
 export class UserIdTransformer extends GenericIdTransformer<UserId> {
