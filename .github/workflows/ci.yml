@@ -49,6 +49,6 @@ jobs:
         DB_PORT: 5433
         DB_USER: testuser
         DB_PASSWORD: testpass
-        DB_NAME: alacogi-test-db
+        DB_NAME: alacogi_test
         JWT_SECRET: 60d580163a8f10114496b56d6fcf8808
       run: npm run test:integration
