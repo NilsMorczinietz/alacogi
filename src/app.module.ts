@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AlarmModule } from './modules/alarm/alarm.module';
 import { AuthModule } from './modules/auth/auth.module';
-
+import { DiveraModule } from './modules/divera/divera.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -28,6 +28,7 @@ import { UserModule } from './modules/user/user.module';
     UserModule,
     AuthModule,
     AlarmModule,
+    DiveraModule,
   ],
 })
 export class AppModule {}
