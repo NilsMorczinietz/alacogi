@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Server } from 'http';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
-import { AuthModule } from '../../src/auth/auth.module';
+import { AuthModule } from '../../src/modules/auth/auth.module';
 import { UserModule } from '../../src/modules/user/user.module';
 import { createTestApp } from '../test-app.helper';
 import { clearDatabase } from '../test-db.helper';
