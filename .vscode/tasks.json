@@ -15,7 +15,7 @@
     {
       "label": "Docker: Up (Dev)",
       "type": "shell",
-      "command": "docker-compose up",
+      "command": "docker-compose -f docker/docker-compose.yml up",
       "problemMatcher": [],
       "isBackground": true,
       "presentation": {
@@ -26,7 +26,7 @@
     {
       "label": "Docker: Down",
       "type": "shell",
-      "command": "docker-compose down",
+      "command": "docker-compose -f docker/docker-compose.yml down",
       "problemMatcher": []
     },
     {

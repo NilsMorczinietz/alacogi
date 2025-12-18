@@ -16,7 +16,6 @@ export async function createTestApp(moduleImports: any[]): Promise<{
     imports: [
       ConfigModule.forRoot({
         isGlobal: true,
-        // envFilePath: '.env.test',
       }),
       TypeOrmModule.forRoot(testDbConfig),
       ...moduleImports,

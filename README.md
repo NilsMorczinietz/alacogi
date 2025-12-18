@@ -15,7 +15,7 @@
 
 3. **Production** (alles im Container)
    - VS Code: `Ctrl+Shift+P` → `Tasks: Run Task` → `Docker: Up (Production)`
-   - Oder: `docker-compose up --build`
+   - Oder: `docker-compose -f docker/docker-compose.yml up --build`
 
 ## VS Code Tasks
 
@@ -45,7 +45,7 @@ npm install
 ### 2. Test-Datenbank starten
 
 ```bash
-docker-compose -f docker-compose.test.yml up -d
+docker-compose -f docker/docker-compose.test.yml up -d
 ```
 
 ### 3. Tests ausführen
