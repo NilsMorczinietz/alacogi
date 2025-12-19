@@ -21,6 +21,5 @@ export class AlarmService {
 
   public async announce(): Promise<void> {
     // Implementation for announcing an alarm goes here
-    // This could involve sending notifications, logging, etc.
   }
 }

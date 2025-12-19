@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Permission } from '../../../common/enums/permission.enum';
 import { UserId } from './user-id';
 import { UserIdTransformer } from './user-id.transformer';
 
@@ -19,7 +20,14 @@ export class User {
   @Column({ select: false })
   public password: string;
 
+  @Column({
+    type: 'simple-array',
+    default: '',
+  })
+  public permissions: Permission[];
+
   constructor() {
     this.id = new UserId();
+    this.permissions = [];
   }
 }
