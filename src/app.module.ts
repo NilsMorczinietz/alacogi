@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PermissionsGuard } from './common/guards/permissions.guard';
 import { AlarmModule } from './modules/alarm/alarm.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DiveraModule } from './modules/divera/divera.module';
@@ -29,6 +31,12 @@ import { UserModule } from './modules/user/user.module';
     AuthModule,
     AlarmModule,
     DiveraModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
+    },
   ],
 })
 export class AppModule {}

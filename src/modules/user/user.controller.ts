@@ -1,5 +1,7 @@
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Permissions } from '../../common/decorators/permissions.decorator';
+import { Permission } from '../../common/enums/permission.enum';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserGetDto } from './dto/user-get.dto';
 import { UserService } from './user.service';
@@ -10,11 +12,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(JwtAuthGuard)
+  @Permissions(Permission.USER_READ)
   @Get()
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Alle Benutzer abrufen' })
   @ApiResponse({ status: 200, description: 'Liste aller Benutzer', type: [UserGetDto] })
   @ApiResponse({ status: 401, description: 'Nicht authentifiziert' })
+  @ApiResponse({ status: 403, description: 'Fehlende Berechtigung' })
   public async findAll(): Promise<UserGetDto[]> {
     return this.userService.findAll();
   }
