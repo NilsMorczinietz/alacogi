@@ -11,7 +11,7 @@ export class AlarmController {
   constructor(private readonly alarmService: AlarmService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Permissions(Permission.ALARM_WRITE)
+  @Permissions(Permission.ALARM_ANNOUNCE)
   @Post('announce')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth('JWT-auth')
