@@ -107,5 +107,4 @@ describe('Auth Integration Tests', () => {
         .expect(401);
     });
   });
-
 });
