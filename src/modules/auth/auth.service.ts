@@ -36,8 +36,10 @@ export class AuthService {
     return {
       access_token: token,
       user: {
+        id: user.id.getId(),
         email: user.email,
         name: user.name,
+        permissions: user.permissions ?? [],
       },
     };
   }
@@ -63,7 +65,12 @@ export class AuthService {
 
     return {
       access_token: token,
-      user: { email, name: user.name },
+      user: {
+        id: user.id.getId(),
+        email: user.email,
+        name: user.name,
+        permissions: user.permissions ?? [],
+      },
     };
   }
 

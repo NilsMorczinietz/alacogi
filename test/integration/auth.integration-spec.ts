@@ -40,7 +40,10 @@ describe('Auth Integration Tests', () => {
 
       expect(response.body).toHaveProperty('access_token');
       expect(response.body).toHaveProperty('user');
+      expect(response.body.user.id).toBeDefined();
       expect(response.body.user.email).toBe(registerData.email);
+      expect(response.body.user.name).toBe(registerData.name);
+      expect(response.body.user.permissions).toEqual([]);
       expect(response.body.user).not.toHaveProperty('password');
     });
 
@@ -87,7 +90,9 @@ describe('Auth Integration Tests', () => {
 
       expect(response.body).toHaveProperty('access_token');
       expect(response.body).toHaveProperty('user');
+      expect(response.body.user.id).toBeDefined();
       expect(response.body.user.email).toBe(loginData.email);
+      expect(response.body.user.permissions).toEqual([]);
     });
 
     it('sollte bei falschen Anmeldedaten einen Fehler zurückgeben', async () => {
@@ -122,8 +127,10 @@ describe('Auth Integration Tests', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
 
+      expect(response.body.id).toBeDefined();
       expect(response.body.email).toBe(registerData.email);
       expect(response.body.name).toBe(registerData.name);
+      expect(response.body.permissions).toEqual([]);
     });
 
     it('sollte ohne Token einen 401 Fehler zurückgeben', async () => {

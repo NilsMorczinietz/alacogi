@@ -23,7 +23,7 @@ export class UserService {
     if (includePassword) {
       return this.userRepository.findOne({
         where: { email },
-        select: ['id', 'email', 'name', 'password'],
+        select: ['id', 'email', 'name', 'password', 'permissions'],
       });
     }
     return this.userRepository.findOne({ where: { email } });

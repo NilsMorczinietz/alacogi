@@ -2,6 +2,7 @@ import { Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/commo
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Permissions } from '../../common/decorators/permissions.decorator';
 import { Permission } from '../../common/enums/permission.enum';
+import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AlarmService } from './alarm.service';
 
@@ -10,7 +11,7 @@ import { AlarmService } from './alarm.service';
 export class AlarmController {
   constructor(private readonly alarmService: AlarmService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions(Permission.ALARM_ANNOUNCE)
   @Post('announce')
   @HttpCode(HttpStatus.NO_CONTENT)

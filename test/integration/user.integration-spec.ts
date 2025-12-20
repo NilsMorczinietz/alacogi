@@ -37,15 +37,11 @@ describe('User Integration Tests', () => {
   });
 
   describe('GET /api/v1/users', () => {
-    it('sollte alle Benutzer zurückgeben', async () => {
-      const response = await request(app.getHttpServer() as Server)
+    it('sollte 403 zurückgeben wenn USER_READ Permission fehlt', async () => {
+      await request(app.getHttpServer() as Server)
         .get('/api/v1/users')
         .set('Authorization', `Bearer ${authToken}`)
-        .expect(200);
-
-      expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body.length).toBe(1);
-      expect(response.body[0].email).toBe('test@example.com');
+        .expect(403);
     });
 
     it('sollte ohne Token einen 401 Fehler zurückgeben', async () => {
@@ -62,8 +58,10 @@ describe('User Integration Tests', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
 
+      expect(response.body.id).toBeDefined();
       expect(response.body.email).toBe('test@example.com');
       expect(response.body.name).toBe('Max Mustermann');
+      expect(response.body.permissions).toEqual([]);
       expect(response.body).not.toHaveProperty('password');
     });
 
