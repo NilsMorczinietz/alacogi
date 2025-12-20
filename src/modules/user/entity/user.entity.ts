@@ -26,6 +26,9 @@ export class User {
   })
   public permissions: Permission[];
 
+  @Column({ nullable: true })
+  public diveraAccessKey: string;
+
   constructor() {
     this.id = new UserId();
     this.permissions = [];

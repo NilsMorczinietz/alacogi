@@ -39,6 +39,7 @@ export class AuthService {
         id: user.id.getId(),
         email: user.email,
         name: user.name,
+        diveraAccessKey: user.diveraAccessKey,
         permissions: user.permissions ?? [],
       },
     };
@@ -69,6 +70,7 @@ export class AuthService {
         id: user.id.getId(),
         email: user.email,
         name: user.name,
+        diveraAccessKey: user.diveraAccessKey,
         permissions: user.permissions ?? [],
       },
     };

@@ -27,6 +27,7 @@ export class UserController {
       id: user.id.getId(),
       name: user.name,
       email: user.email,
+      diveraAccessKey: user.diveraAccessKey,
       permissions: user.permissions ?? [],
     }));
   }
@@ -43,6 +44,7 @@ export class UserController {
       id: user.id.getId(),
       name: user.name,
       email: user.email,
+      diveraAccessKey: user.diveraAccessKey,
       permissions: user.permissions ?? [],
     };
   }

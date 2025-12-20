@@ -1,5 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class UserCreateDto {
   @ApiProperty({
@@ -17,4 +17,11 @@ export class UserCreateDto {
   @IsEmail()
   @IsNotEmpty()
   public email: string;
+
+  @ApiProperty({
+    description: 'Der eigene Divera Access Key von DIVERA 24/7',
+    example: 'gAWAKJ8lphLvW7rNMcmZSFzBMvgg53lb_pMbOXzUVS3czdfMlc7-WPVnOtRGinNN',
+  })
+  @IsString()
+  public diveraAccessKey: string;
 }
