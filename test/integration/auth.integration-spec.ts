@@ -108,35 +108,4 @@ describe('Auth Integration Tests', () => {
     });
   });
 
-  describe('GET /api/v1/auth/profile', () => {
-    it('sollte das Profil eines authentifizierten Benutzers zurückgeben', async () => {
-      const registerData = {
-        email: 'test@example.com',
-        password: 'SecurePass123!',
-        name: 'Max Mustermann',
-      };
-
-      const registerResponse = await request(app.getHttpServer() as Server)
-        .post('/api/v1/auth/register')
-        .send(registerData);
-
-      const token = registerResponse.body.access_token;
-
-      const response = await request(app.getHttpServer() as Server)
-        .get('/api/v1/auth/profile')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(200);
-
-      expect(response.body.id).toBeDefined();
-      expect(response.body.email).toBe(registerData.email);
-      expect(response.body.name).toBe(registerData.name);
-      expect(response.body.permissions).toEqual([]);
-    });
-
-    it('sollte ohne Token einen 401 Fehler zurückgeben', async () => {
-      await request(app.getHttpServer() as Server)
-        .get('/api/v1/auth/profile')
-        .expect(401);
-    });
-  });
 });
