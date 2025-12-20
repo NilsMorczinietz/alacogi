@@ -1,11 +1,9 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserGetDto } from '../user/dto/user-get.dto';
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -26,15 +24,5 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Ungültige Anmeldedaten' })
   public async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(loginDto);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Aktuelles Benutzerprofil abrufen' })
-  @ApiResponse({ status: 200, description: 'Profil erfolgreich abgerufen', type: UserGetDto })
-  @ApiResponse({ status: 401, description: 'Nicht authentifiziert' })
-  public getProfile(@Request() req: { user: UserGetDto }): UserGetDto {
-    return req.user;
   }
 }
