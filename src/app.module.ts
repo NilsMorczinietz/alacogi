@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AlarmModule } from './modules/alarm/alarm.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DiveraModule } from './modules/divera/divera.module';
+import { EventsModule } from './modules/events/events.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -29,6 +30,7 @@ import { UserModule } from './modules/user/user.module';
     AuthModule,
     AlarmModule,
     DiveraModule,
+    EventsModule,
   ],
 })
 export class AppModule {}

@@ -41,4 +41,17 @@ export class UserService {
     });
     return this.userRepository.save(user);
   }
+
+  public async updateRefreshToken(userId: UserId, refreshToken: string | null): Promise<void> {
+    if (!refreshToken) return;
+    await this.userRepository.update({ id: userId }, { refreshToken });
+  }
+
+  public async getRefreshToken(userId: UserId): Promise<string | null> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'refreshToken'],
+    });
+    return user?.refreshToken ?? null;
+  }
 }

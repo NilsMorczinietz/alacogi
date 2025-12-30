@@ -15,7 +15,7 @@
     {
       "label": "Docker: Up (Dev)",
       "type": "shell",
-      "command": "docker-compose -f docker/docker-compose.yml up",
+      "command": "docker-compose -f docker/docker-compose.yml up --build",
       "problemMatcher": [],
       "isBackground": true,
       "presentation": {

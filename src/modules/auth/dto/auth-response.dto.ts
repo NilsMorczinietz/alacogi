@@ -9,6 +9,12 @@ export class AuthResponseDto {
   public access_token: string;
 
   @ApiProperty({
+    description: 'JWT Refresh Token',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  })
+  public refresh_token: string;
+
+  @ApiProperty({
     description: 'Benutzerdaten',
     type: UserGetDto,
   })

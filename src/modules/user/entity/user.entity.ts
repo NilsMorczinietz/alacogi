@@ -29,6 +29,9 @@ export class User {
   @Column({ nullable: true })
   public diveraAccessKey: string;
 
+  @Column({ nullable: true, select: false })
+  public refreshToken: string;
+
   constructor() {
     this.id = new UserId();
     this.permissions = [];
