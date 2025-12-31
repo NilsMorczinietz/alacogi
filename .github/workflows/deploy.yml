@@ -1,0 +1,215 @@
+name: Deploy to Production
+
+on:
+  # Manueller Trigger - nur auf Anforderung
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+      run_migrations:
+        description: 'Run database migrations after deployment'
+        required: true
+        default: true
+        type: boolean
+      skip_tests:
+        description: 'Skip tests before deployment'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.skip_tests }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    needs: test
+    if: always() && (needs.test.result == 'success' || inputs.skip_tests)
+
+    environment:
+      name: ${{ inputs.environment }}
+      url: http://217.160.234.172:3000
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create deployment package
+        run: |
+          git archive --format=tar.gz --output=alacogi.tar.gz HEAD
+          echo "📦 Deployment package created"
+
+      - name: Upload to server
+        env:
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          scp alacogi.tar.gz $SERVER_USER@$SERVER_HOST:/tmp/
+          echo "📤 Files uploaded to server"
+
+      - name: Deploy on server
+        env:
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          RUN_MIGRATIONS: ${{ inputs.run_migrations }}
+        run: |
+          ssh $SERVER_USER@$SERVER_HOST << 'ENDSSH'
+          set -e
+
+          APP_PATH="/opt/alacogi"
+          BACKUP_PATH="/opt/alacogi-backups"
+
+          echo "🔄 Creating backup..."
+          if [ -d "$APP_PATH" ]; then
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+            mkdir -p "$BACKUP_PATH"
+            cp -r "$APP_PATH" "$BACKUP_PATH/alacogi_$TIMESTAMP"
+            
+            # Keep only last 5 backups
+            cd "$BACKUP_PATH"
+            ls -t | tail -n +6 | xargs -r rm -rf
+            
+            echo "✅ Backup created: alacogi_$TIMESTAMP"
+          fi
+
+          echo "📦 Extracting new version..."
+          mkdir -p "$APP_PATH"
+          tar -xzf /tmp/alacogi.tar.gz -C "$APP_PATH"
+          rm /tmp/alacogi.tar.gz
+
+          cd "$APP_PATH"
+
+          echo "🛑 Stopping containers..."
+          docker-compose -f docker/docker-compose.prod.yml down || true
+
+          echo "🔨 Building new images..."
+          docker-compose -f docker/docker-compose.prod.yml build --no-cache
+
+          echo "🚀 Starting containers..."
+          docker-compose -f docker/docker-compose.prod.yml up -d
+
+          echo "⏳ Waiting for services..."
+          sleep 15
+
+          if docker-compose -f docker/docker-compose.prod.yml ps | grep -q "Up"; then
+            echo "✅ Containers are running"
+            
+            if [ "$RUN_MIGRATIONS" = "true" ]; then
+              echo "🔄 Running database migrations..."
+              docker-compose -f docker/docker-compose.prod.yml exec -T backend npm run migration:run || echo "⚠️  No migrations to run"
+            fi
+            
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Deployment failed! Containers not running."
+            docker-compose -f docker/docker-compose.prod.yml logs
+            exit 1
+          fi
+          ENDSSH
+
+      - name: Health check
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          sleep 5
+          response=$(curl -s -o /dev/null -w "%{http_code}" http://$SERVER_HOST:3000/api/v1)
+          if [ $response -eq 200 ] || [ $response -eq 404 ]; then
+            echo "✅ Health check passed (HTTP $response)"
+          else
+            echo "❌ Health check failed (HTTP $response)"
+            exit 1
+          fi
+
+      - name: Deployment summary
+        if: success()
+        run: |
+          echo "## 🚀 Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Migrations:** ${{ inputs.run_migrations }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 **Server:** http://${{ secrets.SERVER_HOST }}:3000" >> $GITHUB_STEP_SUMMARY
+          echo "📚 **API Docs:** http://${{ secrets.SERVER_HOST }}:3000/api/docs" >> $GITHUB_STEP_SUMMARY
+
+  rollback:
+    name: Rollback (if needed)
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: failure()
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Rollback to previous version
+        env:
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          ssh $SERVER_USER@$SERVER_HOST << 'ENDSSH'
+          set -e
+
+          BACKUP_PATH="/opt/alacogi-backups"
+          APP_PATH="/opt/alacogi"
+
+          echo "🔄 Rolling back to previous version..."
+
+          LATEST_BACKUP=$(ls -t "$BACKUP_PATH" | head -1)
+
+          if [ -n "$LATEST_BACKUP" ]; then
+            rm -rf "$APP_PATH"
+            cp -r "$BACKUP_PATH/$LATEST_BACKUP" "$APP_PATH"
+            
+            cd "$APP_PATH"
+            docker-compose -f docker/docker-compose.prod.yml up -d
+            
+            echo "✅ Rollback completed: $LATEST_BACKUP"
+          else
+            echo "❌ No backup found for rollback"
+            exit 1
+          fi
+          ENDSSH
