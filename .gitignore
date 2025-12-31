@@ -1,6 +1,8 @@
 node_modules
 dist
 .env
+.env.production
+.env.local
 
 # Test coverage
 coverage
@@ -13,3 +15,9 @@ coverage
 test/**/*.js
 test/**/*.js.map
 test/**/*.d.ts
+
+# Deployment
+*.tar.gz
+.ssh
+backups/
+*.sql
