@@ -28,7 +28,7 @@ export class Alarm {
   public text: string;
 
   @Column({
-    type: 'text',
+    type: 'jsonb',
     transformer: new AddressTransformer(),
   })
   public address: Address;
