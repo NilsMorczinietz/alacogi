@@ -149,7 +149,6 @@ export class AlarmService {
       lng: alarm.lng,
       priority: alarm.priority,
       date: alarm.date,
-      createdAt: alarm.createdAt,
     });
   }
 }

@@ -52,9 +52,6 @@ export class Alarm {
   @Column('timestamptz')
   public date: Date;
 
-  @Column('timestamptz', { nullable: true })
-  public createdAt: Date;
-
   constructor() {
     this.id = new AlarmId();
   }
