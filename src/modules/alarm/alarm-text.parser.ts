@@ -55,6 +55,11 @@ export class AlarmTextParser {
   /**
    * Parses address string into Address value object
    * Expected format: "BUS Treptower Str.,Lichtenberger Straße,MNH-Mitte,Monheim"
+   * Pattern: [Building/Location], [Street], [District], [City]
+   *
+   * The street is identified by containing "Straße", "Str.", "Weg", "Platz", etc.
+   * The city is the last part
+   * Building/location details (like "BUS Treptower Str.") and district go into details
    */
   private static parseAddress(addressString: string): Address | null {
     if (!addressString) {
@@ -75,19 +80,42 @@ export class AlarmTextParser {
     let city = '';
     let details = '';
 
+    // City is always the last part
+    city = parts[parts.length - 1];
+
     if (parts.length === 1) {
-      // Only one part, assume it's the street
+      // Only one part, could be city or street - assume street and use as both
       street = parts[0];
-      city = 'Unbekannt';
+      city = parts[0];
     } else if (parts.length === 2) {
-      // Two parts: street and city
+      // Two parts: assume first is street, second is city
       street = parts[0];
-      city = parts[1];
     } else {
-      // Multiple parts: first is usually street, last is city, rest are details
-      street = parts[0];
-      city = parts[parts.length - 1];
-      details = parts.slice(1, -1).join(', ');
+      // Multiple parts: find the actual street (contains street indicators)
+      // Common German street indicators
+      const streetIndicators = /Straße|Str\.|Weg|Platz|Gasse|Allee|Ring|Ufer|Damm|Chaussee/i;
+
+      // Look for the part that contains a street indicator
+      let streetIndex = -1;
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (streetIndicators.test(parts[i])) {
+          streetIndex = i;
+          break;
+        }
+      }
+
+      if (streetIndex !== -1) {
+        // Found a street indicator
+        street = parts[streetIndex];
+        // Only parts BEFORE the street go into details (building/location identifiers)
+        // Parts between street and city (like districts) are ignored
+        const detailsParts = parts.slice(0, streetIndex).filter((p) => p.length > 0);
+        details = detailsParts.join(', ');
+      } else {
+        // No street indicator found, use first part as street
+        street = parts[0];
+        details = parts.slice(1, -1).join(', ');
+      }
     }
 
     try {
