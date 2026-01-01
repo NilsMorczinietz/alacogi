@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { unixToGermanDate } from '../../common/utils/date.util';
 import { DiveraService } from '../divera/divera.service';
 import { DiveraAlarmDto } from '../divera/dto/divera-alarm.dto';
 import { EventsGateway } from '../events/events.gateway';
@@ -119,7 +118,8 @@ export class AlarmService {
     alarm.lat = diveraAlarm.lat;
     alarm.lng = diveraAlarm.lng;
     alarm.priority = diveraAlarm.priority;
-    alarm.date = unixToGermanDate(diveraAlarm.date);
+    // Convert Unix timestamp (seconds) to Date object
+    alarm.date = new Date(diveraAlarm.date * 1000);
 
     // Save to database
     const savedAlarm = await this.alarmRepository.save(alarm);
