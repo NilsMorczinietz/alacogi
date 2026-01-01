@@ -30,7 +30,7 @@ services:
     environment:
       # Override for Docker network
       DB_HOST: postgres
-      NODE_ENV: production
+      NODE_ENV: development
     depends_on:
       postgres:
         condition: service_healthy

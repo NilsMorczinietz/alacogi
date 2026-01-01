@@ -11,9 +11,9 @@ export const dataSourceOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME || 'admin',
   password: process.env.DB_PASSWORD || 'admin123',
   database: process.env.DB_DATABASE || 'alacogi',
-  entities: ['src/**/*.entity{.ts,.js}'],
-  migrations: ['src/migrations/*{.ts,.js}'],
-  synchronize: false, // NEVER use true in production!
+  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  migrations: [__dirname + '/migrations/*{.ts,.js}'],
+  synchronize: true, // NEVER use true in production!
   logging: process.env.NODE_ENV !== 'production',
 };
 

@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Address } from '../../common/address';
 import { DiveraService } from '../divera/divera.service';
+import { DiveraAlarmDto } from '../divera/dto/divera-alarm.dto';
 import { EventsGateway } from '../events/events.gateway';
+import { AlarmTextParser } from './alarm-text.parser';
 import { AlarmId } from './entity/alarm-id';
 import { Alarm } from './entity/alarm.entity';
 
@@ -25,51 +28,145 @@ export class AlarmService {
     return this.alarmRepository.findOne({ where: { id } });
   }
 
+  /**
+   * Process announce from Divera: fetch alarms, save to DB, and broadcast via WebSocket
+   */
   public async announce(): Promise<void> {
     try {
-      this.logger.log('Alarm announce triggered - fetching latest alarm from Divera');
+      this.logger.log('Alarm announce triggered - fetching alarms from Divera');
 
-      // Letzten Alarm von Divera API abrufen
+      // Fetch alarms list from Divera API
       const alarmsData = await this.diveraService.getAlarms();
 
-      // Überprüfen ob Alarme vorhanden sind
+      // Check if alarms are present
       if (!alarmsData.sorting || alarmsData.sorting.length === 0) {
         this.logger.warn('No alarms found in Divera response');
         return;
       }
 
-      // Letzten Alarm aus der sortierten Liste holen
-      const latestAlarmId = alarmsData.sorting[0];
-      const latestAlarm = alarmsData.items[latestAlarmId];
+      this.logger.log(`Processing ${alarmsData.sorting.length} alarm(s) from Divera`);
 
-      if (!latestAlarm) {
-        this.logger.warn(`Latest alarm with ID ${latestAlarmId} not found in items`);
-        return;
+      // Process each alarm in the list
+      const processedAlarms: Alarm[] = [];
+
+      for (const alarmId of alarmsData.sorting) {
+        const diveraAlarm = alarmsData.items[alarmId];
+
+        if (!diveraAlarm) {
+          this.logger.warn(`Alarm with ID ${alarmId} not found in items`);
+          continue;
+        }
+
+        try {
+          // Transform and save alarm
+          const alarm = await this.processAndSaveAlarm(diveraAlarm);
+          if (alarm) {
+            processedAlarms.push(alarm);
+          }
+        } catch (error) {
+          this.logger.error(`Failed to process alarm ${alarmId}`, error);
+          // Continue processing other alarms
+        }
       }
 
-      this.logger.log(`Broadcasting latest alarm (ID: ${latestAlarm.id}) to all connected clients`);
+      // Broadcast all new alarms via WebSocket
+      if (processedAlarms.length > 0) {
+        this.logger.log(`Broadcasting ${processedAlarms.length} alarm(s) to WebSocket clients`);
 
-      // Alarm an alle verbundenen WebSocket-Clients senden
-      this.eventsGateway.broadcast('alarm', {
-        id: latestAlarm.id,
-        title: latestAlarm.title,
-        text: latestAlarm.text,
-        address: latestAlarm.address,
-        lat: latestAlarm.lat,
-        lng: latestAlarm.lng,
-        priority: latestAlarm.priority,
-        date: latestAlarm.date,
-        closed: latestAlarm.closed,
-        new: latestAlarm.new,
-        foreign_id: latestAlarm.foreign_id,
-        ts_create: latestAlarm.ts_create,
-        ts_update: latestAlarm.ts_update,
-      });
+        for (const alarm of processedAlarms) {
+          this.broadcastAlarm(alarm);
+        }
+      }
 
-      this.logger.log('Alarm broadcast completed successfully');
+      this.logger.log('Alarm announce completed successfully');
     } catch (error) {
       this.logger.error('Failed to announce alarm', error);
       throw error;
     }
+  }
+
+  /**
+   * Transform Divera alarm to internal format and save to database
+   * Returns null if alarm already exists (duplicate)
+   */
+  private async processAndSaveAlarm(diveraAlarm: DiveraAlarmDto): Promise<Alarm | null> {
+    // Check if alarm already exists (by diveraId or foreignId)
+    const existingAlarm = await this.alarmRepository.findOne({
+      where: [{ diveraId: diveraAlarm.id }, { foreignId: diveraAlarm.foreign_id }],
+    });
+
+    if (existingAlarm) {
+      this.logger.debug(`Alarm ${diveraAlarm.id} already exists in database, skipping`);
+      return null;
+    }
+
+    // Parse text to extract reporter, remarks, and address
+    const parsedText = AlarmTextParser.parse(diveraAlarm.text, diveraAlarm.address);
+
+    // Create new alarm entity
+    const alarm = new Alarm();
+    alarm.diveraId = diveraAlarm.id;
+    alarm.foreignId = diveraAlarm.foreign_id;
+    alarm.authorId = diveraAlarm.author_id;
+    alarm.title = diveraAlarm.title;
+    alarm.text = diveraAlarm.text;
+    alarm.report = diveraAlarm.report || '';
+
+    // Use parsed address or create default one
+    alarm.address = parsedText.address || this.createDefaultAddress(diveraAlarm.address);
+    alarm.reporter = parsedText.reporter ?? null;
+    alarm.remarks = parsedText.remarks ?? null;
+
+    alarm.lat = diveraAlarm.lat;
+    alarm.lng = diveraAlarm.lng;
+    alarm.priority = diveraAlarm.priority;
+    alarm.date = new Date(diveraAlarm.date * 1000); // Convert Unix timestamp
+    if (diveraAlarm.ts_create) {
+      alarm.createdAt = new Date(diveraAlarm.ts_create * 1000);
+    }
+
+    // Save to database
+    const savedAlarm = await this.alarmRepository.save(alarm);
+    this.logger.log(`Saved alarm ${savedAlarm.diveraId} (${savedAlarm.foreignId}) to database`);
+
+    return savedAlarm;
+  }
+
+  /**
+   * Create default address if parsing fails
+   */
+  private createDefaultAddress(addressString: string): Address {
+    if (!addressString) {
+      return new Address('Unbekannt', 'Unbekannt');
+    }
+
+    // Simple fallback: use whole string as street
+    return new Address(addressString, 'Unbekannt');
+  }
+
+  /**
+   * Broadcast alarm to all WebSocket clients
+   */
+  private broadcastAlarm(alarm: Alarm): void {
+    this.eventsGateway.broadcast('alarm', {
+      id: alarm.id.getId(),
+      diveraId: alarm.diveraId,
+      foreignId: alarm.foreignId,
+      title: alarm.title,
+      text: alarm.text,
+      address: {
+        street: alarm.address.street,
+        city: alarm.address.city,
+        details: alarm.address.details,
+        full: alarm.address.fullAddress,
+      },
+      reporter: alarm.reporter,
+      remarks: alarm.remarks,
+      lat: alarm.lat,
+      lng: alarm.lng,
+      priority: alarm.priority,
+      date: alarm.date,
+      createdAt: alarm.createdAt,
+    });
   }
 }
