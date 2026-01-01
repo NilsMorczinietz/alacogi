@@ -110,7 +110,6 @@ export class AlarmService {
     alarm.authorId = diveraAlarm.author_id;
     alarm.title = diveraAlarm.title;
     alarm.text = diveraAlarm.text;
-    alarm.report = diveraAlarm.report || '';
 
     // Use parsed address or create default one
     alarm.address = parsedText.address || this.createDefaultAddress(diveraAlarm.address);
