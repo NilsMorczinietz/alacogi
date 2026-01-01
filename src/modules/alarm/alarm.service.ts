@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Address } from '../../common/address';
+import { unixToGermanDate } from '../../common/utils/date.util';
 import { DiveraService } from '../divera/divera.service';
 import { DiveraAlarmDto } from '../divera/dto/divera-alarm.dto';
 import { EventsGateway } from '../events/events.gateway';
@@ -112,17 +112,14 @@ export class AlarmService {
     alarm.text = diveraAlarm.text;
 
     // Use parsed address or create default one
-    alarm.address = parsedText.address || this.createDefaultAddress(diveraAlarm.address);
+    alarm.address = parsedText.address ?? null;
     alarm.reporter = parsedText.reporter ?? null;
     alarm.remarks = parsedText.remarks ?? null;
 
     alarm.lat = diveraAlarm.lat;
     alarm.lng = diveraAlarm.lng;
     alarm.priority = diveraAlarm.priority;
-    alarm.date = new Date(diveraAlarm.date * 1000); // Convert Unix timestamp
-    if (diveraAlarm.ts_create) {
-      alarm.createdAt = new Date(diveraAlarm.ts_create * 1000);
-    }
+    alarm.date = unixToGermanDate(diveraAlarm.date);
 
     // Save to database
     const savedAlarm = await this.alarmRepository.save(alarm);
@@ -131,21 +128,6 @@ export class AlarmService {
     return savedAlarm;
   }
 
-  /**
-   * Create default address if parsing fails
-   */
-  private createDefaultAddress(addressString: string): Address {
-    if (!addressString) {
-      return new Address('Unbekannt', 'Unbekannt');
-    }
-
-    // Simple fallback: use whole string as street
-    return new Address(addressString, 'Unbekannt');
-  }
-
-  /**
-   * Broadcast alarm to all WebSocket clients
-   */
   private broadcastAlarm(alarm: Alarm): void {
     this.eventsGateway.broadcast('alarm', {
       id: alarm.id.getId(),
@@ -153,12 +135,14 @@ export class AlarmService {
       foreignId: alarm.foreignId,
       title: alarm.title,
       text: alarm.text,
-      address: {
-        street: alarm.address.street,
-        city: alarm.address.city,
-        details: alarm.address.details,
-        full: alarm.address.fullAddress,
-      },
+      address: alarm.address
+        ? {
+            street: alarm.address.street ?? null,
+            city: alarm.address.city ?? null,
+            details: alarm.address.details ?? null,
+            full: alarm.address.fullAddress ?? null,
+          }
+        : null,
       reporter: alarm.reporter,
       remarks: alarm.remarks,
       lat: alarm.lat,

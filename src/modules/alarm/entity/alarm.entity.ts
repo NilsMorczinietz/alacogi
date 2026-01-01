@@ -30,8 +30,9 @@ export class Alarm {
   @Column({
     type: 'jsonb',
     transformer: new AddressTransformer(),
+    nullable: true,
   })
-  public address: Address;
+  public address: Address | null;
 
   @Column('text', { nullable: true })
   public reporter: string | null;
