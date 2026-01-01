@@ -14,7 +14,7 @@ export class AlarmTextParser {
    * - Address components
    *
    * Expected format examples:
-   * "F2_Gebäude, Lichtenberger Straße ,MNH-Mitte,  BUS Treptower Str., , ENR:68, Melder:arab, Einweiser an der haltestelle brennt ein Balkon"
+   * "F2_Gebäude, Lichtenberger Straße ,MNH-Mitte,  BUS Treptower Str., , ENR:68, Melder:mustermann, Einweiser an der haltestelle brennt ein Balkon"
    */
   public static parse(text: string, diveraAddress?: string): ParsedAlarmText {
     const result: ParsedAlarmText = {

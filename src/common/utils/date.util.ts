@@ -14,11 +14,24 @@ export const GERMAN_TIMEZONE = 'Europe/Berlin';
 
 /**
  * Convert Unix timestamp to Date object in German timezone
+ * Stores the German local time as UTC (e.g., 01:18:27 Berlin → 01:18:27 UTC)
  * @param timestamp Unix timestamp in seconds
- * @returns Date object in German timezone
+ * @returns Date object with German local time stored as UTC
  */
 export function unixToGermanDate(timestamp: number): Date {
-  return dayjs.unix(timestamp).tz(GERMAN_TIMEZONE).toDate();
+  const berlinTime = dayjs.unix(timestamp).tz(GERMAN_TIMEZONE);
+  // Extract the time components in Berlin timezone and create a UTC date with those values
+  return new Date(
+    Date.UTC(
+      berlinTime.year(),
+      berlinTime.month(),
+      berlinTime.date(),
+      berlinTime.hour(),
+      berlinTime.minute(),
+      berlinTime.second(),
+      berlinTime.millisecond(),
+    ),
+  );
 }
 
 /**

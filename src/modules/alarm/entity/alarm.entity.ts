@@ -49,10 +49,10 @@ export class Alarm {
   @Column()
   public priority: boolean;
 
-  @Column()
+  @Column('timestamptz')
   public date: Date;
 
-  @Column({ nullable: true })
+  @Column('timestamptz', { nullable: true })
   public createdAt: Date;
 
   constructor() {
