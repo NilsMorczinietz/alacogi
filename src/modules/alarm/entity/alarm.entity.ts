@@ -1,6 +1,5 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { Address } from '../../../common/address';
-import { AddressTransformer } from '../../../common/address.transformer';
 import { AlarmId } from './alarm-id';
 import { AlarmIdTransformer } from './alarm-id.transformer';
 
@@ -27,11 +26,10 @@ export class Alarm {
   @Column('text')
   public text: string;
 
-  @Column({
-    type: 'jsonb',
-    transformer: new AddressTransformer(),
-    nullable: true,
-  })
+  @Column({ type: 'boolean', default: false })
+  public isDrill: boolean;
+
+  @Column(() => Address, { prefix: 'address' })
   public address: Address | null;
 
   @Column('text', { nullable: true })

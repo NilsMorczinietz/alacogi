@@ -110,8 +110,12 @@ export class AlarmService {
     alarm.title = diveraAlarm.title;
     alarm.text = diveraAlarm.text;
 
+    // Check if this is a drill/test alarm
+    alarm.isDrill = diveraAlarm.title.toLowerCase().includes('probe');
+
     // Use parsed address or create default one
-    alarm.address = parsedText.address ?? null;
+    // For drill alarms, set address to null
+    alarm.address = alarm.isDrill ? null : (parsedText.address ?? null);
     alarm.reporter = parsedText.reporter ?? null;
     alarm.remarks = parsedText.remarks ?? null;
 
@@ -135,6 +139,7 @@ export class AlarmService {
       foreignId: alarm.foreignId,
       title: alarm.title,
       text: alarm.text,
+      isDrill: alarm.isDrill,
       address: alarm.address
         ? {
             street: alarm.address.street ?? null,
